@@ -16,10 +16,17 @@ if (!defaultExperiment) {
 let sketchInstance: p5 | null = null;
 
 function App() {
-  const initialExperimentId = useMemo(
-    () => storage.get(STORAGE_KEY.ACTIVE_EXPERIMENT_ID) || defaultExperiment.id,
-    [],
-  );
+  const initialExperimentId = useMemo(() => {
+    const storedExperimentId = storage.get(STORAGE_KEY.ACTIVE_EXPERIMENT_ID);
+    if (
+      !storedExperimentId ||
+      !experiments.find((experiment) => experiment.id === storedExperimentId)
+    ) {
+      storage.remove(STORAGE_KEY.ACTIVE_EXPERIMENT_ID);
+    }
+
+    return storedExperimentId || defaultExperiment.id;
+  }, []);
 
   const lastExperimentId = useRef<string | null>(null);
   const [experimentId, setExperimentId] = useState(initialExperimentId);
