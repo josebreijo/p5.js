@@ -21,8 +21,6 @@ function App() {
     [],
   );
 
-  console.log({ initialExperimentId });
-
   const lastExperimentId = useRef<string | null>(null);
   const [experimentId, setExperimentId] = useState(initialExperimentId);
 
