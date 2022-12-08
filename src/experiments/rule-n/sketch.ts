@@ -3,9 +3,9 @@ import { Bit } from './types';
 import utils from './utils';
 
 function sketch(c: p5) {
-  const FRAMERATE = 30;
+  const FRAMERATE = 60;
 
-  const CELL_SIZE = 6;
+  const CELL_SIZE = 1;
   const gridLength = c.ceil(c.windowWidth / CELL_SIZE);
   const lifespan = c.ceil(c.windowHeight / CELL_SIZE);
 
@@ -13,7 +13,7 @@ function sketch(c: p5) {
   const ruleSet = utils.generateRuleSet(RULE);
 
   let epoch = 0;
-  let cells: Bit[] = Array.from({ length: gridLength }, () => 0);
+  let cells: Bit[] = Array.from({ length: gridLength * 2 }, () => 0);
 
   c.setup = function setup() {
     c.frameRate(FRAMERATE);
@@ -21,13 +21,15 @@ function sketch(c: p5) {
     c.colorMode(c.HSB);
     c.background(0);
     c.fill(255);
-    c.stroke(230, 100, 50);
     c.strokeWeight(1);
 
     cells[c.floor(gridLength / 2)] = 1;
   };
 
   c.draw = function draw() {
+    const hue = c.int(c.map(epoch, 0, c.windowHeight, 0, 360));
+    c.stroke(hue, 100, 100);
+
     for (let i = 0; i < gridLength; i++) {
       if (cells[i]) {
         c.rect(i * CELL_SIZE, epoch * CELL_SIZE, CELL_SIZE, CELL_SIZE);
