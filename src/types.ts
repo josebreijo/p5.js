@@ -1,3 +1,5 @@
+import p5 from 'p5';
+
 export interface Position {
   x: number;
   y: number;
@@ -11,4 +13,12 @@ declare global {
   interface Window {
     globals: Globals;
   }
+}
+
+export interface Experiment {
+  id: string;
+  name: string;
+  sketch: (p: p5) => void;
+  description?: string;
+  url?: string;
 }

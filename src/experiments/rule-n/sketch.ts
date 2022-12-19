@@ -5,7 +5,7 @@ import utils from './utils';
 function sketch(c: p5) {
   const FRAMERATE = 60;
 
-  const CELL_SIZE = 1;
+  const CELL_SIZE = 4;
   const gridLength = c.ceil(c.windowWidth / CELL_SIZE);
   const lifespan = c.ceil(c.windowHeight / CELL_SIZE);
 

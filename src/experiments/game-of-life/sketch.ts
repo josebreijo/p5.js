@@ -3,7 +3,7 @@ import p5 from 'p5';
 function sketch(c: p5) {
   const FRAMERATE = 24;
 
-  const SIZE = 100;
+  const SIZE = 40;
   const DEAD = 0;
   const ALIVE = 1;
   const DEAD_COLOR = 0;
