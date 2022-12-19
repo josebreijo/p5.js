@@ -2,11 +2,14 @@ import { render } from 'preact';
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import p5 from 'p5';
 
-import experiments from './experiments';
+import type { Experiment } from './types';
+import experimentList from './experiments';
 import storage from './modules/storage';
+import { Controls } from './components/Controls';
 import { SKETCH_NODE_ID, STORAGE_KEY } from './constants';
 import './index.css';
 
+const experiments = experimentList as Experiment[];
 const [defaultExperiment] = experiments;
 
 if (!defaultExperiment) {
@@ -47,6 +50,7 @@ function App() {
 
       sketchInstance = new p5(activeExperiment.sketch, sketchNode);
       lastExperimentId.current = activeExperiment.id;
+
       storage.set(STORAGE_KEY.ACTIVE_EXPERIMENT_ID, activeExperiment.id);
     }
 
@@ -65,15 +69,7 @@ function App() {
 
   return (
     <main>
-      <section id="controls">
-        <select value={experimentId} onChange={changeSketch}>
-          {experiments.map((experiment) => (
-            <option value={experiment.id} selected={experiment.id === experimentId}>
-              {experiment.title}
-            </option>
-          ))}
-        </select>
-      </section>
+      <Controls experiments={experiments} experimentId={experimentId} changeSketch={changeSketch} />
 
       <section id={SKETCH_NODE_ID} />
     </main>

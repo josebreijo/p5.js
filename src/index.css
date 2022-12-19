@@ -51,25 +51,6 @@ main {
   overscroll-behavior: none;
 }
 
-#controls {
-  position: absolute;
-  top: var(--space);
-  right: var(--space);
-  opacity: 0.25;
-  transition: opacity 0.25s ease-in-out;
-  z-index: 2;
-}
-
-#controls:hover,
-#controls:focus-within {
-  opacity: 1;
-  cursor: pointer;
-}
-
-#controls select {
-  padding: 0.2rem 0.5rem;
-}
-
 #sketch {
   width: 100%;
   height: 100%;
