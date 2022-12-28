@@ -1,13 +1,14 @@
 import { render } from 'preact';
+import { signal } from '@preact/signals';
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import p5 from 'p5';
 
-import type { Experiment } from './types';
+import type { Control, ControlSettings, ControlType, Experiment } from './types';
 import experimentList from './experiments';
 import storage from './modules/storage';
 import { Controls } from './components/Controls';
 import { SKETCH_NODE_ID, STORAGE_KEY } from './constants';
-import './index.css';
+import './index.module.css';
 
 const experiments = experimentList as Experiment[];
 const [defaultExperiment] = experiments;
@@ -27,12 +28,12 @@ function App() {
     ) {
       storage.remove(STORAGE_KEY.ACTIVE_EXPERIMENT_ID);
     }
-
     return storedExperimentId || defaultExperiment.id;
   }, []);
 
   const lastExperimentId = useRef<string | null>(null);
   const [experimentId, setExperimentId] = useState(initialExperimentId);
+  const [controls, setControls] = useState<Control[]>([]);
 
   useEffect(() => {
     if (lastExperimentId.current !== experimentId) {
@@ -47,6 +48,24 @@ function App() {
       if (!activeExperiment) {
         throw new Error(`No experiment found with id "${experimentId}"!`);
       }
+
+      // @ts-ignore // TODO: type properly
+      activeExperiment.sketch.createControl = function createControl<
+        Type extends ControlType,
+        Settings extends ControlSettings[Type],
+      >(id: string, type: Type, settings: Settings) {
+        const data = signal(settings.value);
+
+        function onChange(value: any) {
+          console.log(`"${id}": ${data.peek()} => ${value}`);
+          data.value = value;
+        }
+
+        const newControl: Control = { id, data, onChange, type, settings };
+        setControls((previousControls) => [...previousControls, newControl]);
+
+        return data;
+      };
 
       sketchInstance = new p5(activeExperiment.sketch, sketchNode);
       lastExperimentId.current = activeExperiment.id;
@@ -69,7 +88,12 @@ function App() {
 
   return (
     <main>
-      <Controls experiments={experiments} experimentId={experimentId} changeSketch={changeSketch} />
+      <Controls
+        experiments={experiments}
+        activeExperimentId={experimentId}
+        changeExperiment={changeSketch}
+        controls={controls}
+      />
 
       <section id={SKETCH_NODE_ID} />
     </main>

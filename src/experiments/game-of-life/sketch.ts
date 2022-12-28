@@ -1,3 +1,4 @@
+import { effect } from '@preact/signals';
 import p5 from 'p5';
 
 function sketch(c: p5) {
@@ -11,6 +12,15 @@ function sketch(c: p5) {
 
   let population: number[][] = [];
   let cellSize = c.windowWidth / SIZE;
+
+  // @ts-expect-error // TODO: type properly
+  const running = sketch.createControl('running', 'checkbox', { value: true });
+
+  effect(() => {
+    if (running.value && !c.isLooping()) {
+      c.loop();
+    }
+  });
 
   function generatePopulation(size: number, { random = true } = {}) {
     return Array.from({ length: size }, () =>
@@ -58,6 +68,10 @@ function sketch(c: p5) {
 
   c.draw = function draw() {
     drawGrid();
+
+    if (c.isLooping() && !running.value) {
+      c.noLoop();
+    }
 
     cellSize = c.windowWidth / SIZE;
 

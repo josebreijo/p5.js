@@ -436,6 +436,11 @@
     estree-walker "^2.0.1"
     picomatch "^2.2.2"
 
+"@tabler/icons@^1.118.0":
+  version "1.118.0"
+  resolved "https://registry.yarnpkg.com/@tabler/icons/-/icons-1.118.0.tgz#8bbda4e7e3c78e4919be6794940b37c7142f223b"
+  integrity sha512-/DFANTIQBz+Moissilo47WPOp598Ht4gxvAtK0f/OC5eL8bjzxbzd4dx7d1uwf1oQ/PvaQ3Sh2UhXKP0I1D1wg==
+
 "@types/p5@^1.4.3":
   version "1.4.3"
   resolved "https://registry.yarnpkg.com/@types/p5/-/p5-1.4.3.tgz#84565d085237fdc149c15e1e9ae8d81db4aa3699"

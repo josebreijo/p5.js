@@ -1,0 +1,48 @@
+.container {
+  z-index: 2;
+  position: absolute;
+  top: var(--space);
+  right: var(--space);
+  opacity: 0.25;
+  background-color: rgba(0, 0, 0, 0.25);
+  border-radius: 3px;
+  transition: opacity 0.25s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+  font-family: 'Iosevka', monospace;
+}
+
+.container:hover,
+.container:focus-within {
+  opacity: 1;
+  cursor: pointer;
+}
+
+.header {
+  display: flex;
+  justify-content: baseline;
+  align-items: center;
+  padding-bottom: 0.5rem;
+}
+
+.header svg {
+  width: 1rem;
+}
+
+.header span {
+  display: inline-block;
+  padding: 0 0.5rem;
+}
+
+.experiments {
+  width: 100%;
+  padding: 0.2rem;
+  margin: 0 0 0 1rem;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.controls {
+  padding-top: 0.5rem;
+}
