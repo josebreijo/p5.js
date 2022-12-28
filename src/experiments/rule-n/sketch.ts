@@ -1,9 +1,19 @@
+import { effect } from '@preact/signals';
 import p5 from 'p5';
+
 import { Bit } from './types';
 import utils from './utils';
 
 function sketch(c: p5) {
-  const FRAMERATE = 60;
+  // @ts-expect-error // TODO: type properly
+  const running = sketch.createControl('running', { type: 'checkbox', value: true });
+
+  // @ts-expect-error // TODO: type properly
+  const frameRate = sketch.createControl('framerate', {
+    type: 'select',
+    value: 30,
+    options: [5, 24, 30, 60],
+  });
 
   const CELL_SIZE = 4;
   const gridLength = c.ceil(c.windowWidth / CELL_SIZE);
@@ -16,7 +26,6 @@ function sketch(c: p5) {
   let cells: Bit[] = Array.from({ length: gridLength * 2 }, () => 0);
 
   c.setup = function setup() {
-    c.frameRate(FRAMERATE);
     c.createCanvas(c.windowWidth, c.windowHeight);
     c.colorMode(c.HSB);
     c.background(0);
@@ -24,6 +33,13 @@ function sketch(c: p5) {
     c.strokeWeight(1);
 
     cells[c.floor(gridLength / 2)] = 1;
+
+    effect(() => c.frameRate(Number(frameRate.value)));
+
+    effect(() => {
+      if (running.value && !c.isLooping()) c.loop();
+      if (c.isLooping() && !running.value) c.noLoop();
+    });
   };
 
   c.draw = function draw() {

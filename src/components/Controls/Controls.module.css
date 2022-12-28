@@ -4,13 +4,14 @@
   top: var(--space);
   right: var(--space);
   opacity: 0.25;
-  background-color: rgba(0, 0, 0, 0.25);
+  background-color: black;
   border-radius: 3px;
   transition: opacity 0.25s ease-in-out;
   display: flex;
   flex-direction: column;
   padding: 0.5rem;
   font-family: 'Iosevka', monospace;
+  user-select: none;
 }
 
 .container:hover,
@@ -45,4 +46,15 @@
 
 .controls {
   padding-top: 0.5rem;
+}
+
+.control {
+  display: grid;
+  grid-template-columns: 1fr min-content;
+  align-items: baseline;
+  text-align: left;
+}
+
+.id {
+  display: inline-block;
 }

@@ -1,19 +1,34 @@
+import { effect } from '@preact/signals';
 import p5 from 'p5';
 
 export function sketch(c: p5) {
-  const FRAMERATE = 60;
+  // @ts-expect-error // TODO: type properly
+  const running = sketch.createControl('running', { type: 'checkbox', value: true });
+
+  // @ts-expect-error // TODO: type properly
+  const frameRate = sketch.createControl('framerate', {
+    type: 'select',
+    value: 30,
+    options: [5, 24, 30, 60],
+  });
 
   let hue = 0;
   let saturation = 100;
   let lightness = 50;
 
   c.setup = function setup() {
-    c.frameRate(FRAMERATE);
     c.createCanvas(c.windowWidth, c.windowHeight);
     c.colorMode(c.HSB);
     c.fill(255);
     c.textSize(26);
     c.textFont('Iosevka Fixed');
+
+    effect(() => c.frameRate(Number(frameRate.value)));
+
+    effect(() => {
+      if (running.value && !c.isLooping()) c.loop();
+      if (c.isLooping() && !running.value) c.noLoop();
+    });
   };
 
   c.draw = function draw() {
@@ -36,10 +51,12 @@ export function sketch(c: p5) {
   };
 
   c.mousePressed = function () {
-    const toggleAnimation = c.isLooping() ? c.noLoop : c.loop;
+    const toggleAnimation = running.value ? c.noLoop : c.loop;
     toggleAnimation.call(c);
 
-    if (!c.isLooping()) {
+    running.value = !running.value;
+
+    if (!running.value) {
       const hslColor = `hsl(${c.int(hue)}deg ${saturation}% ${lightness}%)`;
       window.navigator.clipboard.writeText(hslColor);
     }

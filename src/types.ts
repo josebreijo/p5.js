@@ -18,18 +18,15 @@ export interface Experiment {
   url?: string;
 }
 
-export type ControlType = 'checkbox' | 'select';
-
-// TODO: constrain keys
-export interface ControlSettings {
-  checkbox: { value: boolean };
-  select: { value: string; options: string[] };
-}
+export type ControlSettings = {
+  id: string;
+  name: string;
+  description?: string;
+} & ({ type: 'select'; value: string; options: string[] } | { type: 'checkbox'; value: boolean });
 
 export interface Control {
   id: string;
   data: Signal;
   onChange: (value: any) => void;
-  type: ControlType;
-  settings: Record<string, unknown>;
+  settings: ControlSettings;
 }

@@ -1,8 +1,10 @@
 import { useState } from 'preact/hooks';
 import { IconAdjustmentsHorizontal } from '@tabler/icons';
 
-import type { Control, Experiment } from '../../types';
+import type { JSXInternal } from 'preact/src/jsx';
+import type { Control, ControlSettings, Experiment } from '../../types';
 import { Checkbox } from './components/Checkbox';
+import { Select } from './components/Select';
 import styles from './Controls.module.css';
 
 interface ControlsProps {
@@ -11,6 +13,13 @@ interface ControlsProps {
   experiments: Experiment[];
   controls: Control[];
 }
+
+type ControlFactory = (...args: any[]) => JSXInternal.Element;
+
+const factory: Record<ControlSettings['type'], ControlFactory> = {
+  checkbox: Checkbox,
+  select: Select,
+};
 
 export function Controls({
   experiments,
@@ -40,12 +49,20 @@ export function Controls({
 
       <div class={styles.controls}>
         {controls.map((control) => {
-          switch (control.type) {
-            case 'checkbox':
-              return <Checkbox {...control} />;
-            default:
-              return null;
-          }
+          const Component = factory[control.settings.type];
+
+          return (
+            <label class={styles.control} for={control.id}>
+              <span class={styles.id}>{control.id}</span>
+              <Component
+                id={control.id}
+                data={control.data}
+                onChange={control.onChange}
+                type={control.settings.type}
+                settings={control.settings}
+              />
+            </label>
+          );
         })}
       </div>
     </section>

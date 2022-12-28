@@ -2,8 +2,6 @@ import { effect } from '@preact/signals';
 import p5 from 'p5';
 
 function sketch(c: p5) {
-  const FRAMERATE = 24;
-
   const SIZE = 40;
   const DEAD = 0;
   const ALIVE = 1;
@@ -14,12 +12,13 @@ function sketch(c: p5) {
   let cellSize = c.windowWidth / SIZE;
 
   // @ts-expect-error // TODO: type properly
-  const running = sketch.createControl('running', 'checkbox', { value: true });
+  const running = sketch.createControl('running', { type: 'checkbox', value: true });
 
-  effect(() => {
-    if (running.value && !c.isLooping()) {
-      c.loop();
-    }
+  // @ts-expect-error // TODO: type properly
+  const frameRate = sketch.createControl('framerate', {
+    type: 'select',
+    value: 30,
+    options: [5, 24, 30, 60],
   });
 
   function generatePopulation(size: number, { random = true } = {}) {
@@ -57,11 +56,17 @@ function sketch(c: p5) {
   }
 
   c.setup = function setup() {
-    c.frameRate(FRAMERATE);
     c.createCanvas(c.windowWidth, c.windowHeight);
     c.background(0);
     c.fill(255);
     c.colorMode(c.HSB);
+
+    effect(() => c.frameRate(Number(frameRate.value)));
+
+    effect(() => {
+      if (running.value && !c.isLooping()) c.loop();
+      if (c.isLooping() && !running.value) c.noLoop();
+    });
 
     population = generatePopulation(SIZE);
   };
@@ -69,12 +74,7 @@ function sketch(c: p5) {
   c.draw = function draw() {
     drawGrid();
 
-    if (c.isLooping() && !running.value) {
-      c.noLoop();
-    }
-
     cellSize = c.windowWidth / SIZE;
-
     let nextGen: number[][] = generatePopulation(SIZE, { random: false });
 
     for (let x = 0; x < SIZE; x++) {

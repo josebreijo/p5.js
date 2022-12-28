@@ -1,6 +1,8 @@
+import { effect } from '@preact/signals';
 import p5 from 'p5';
 
 import type { Option, Tile } from './types';
+import * as utils from './utils';
 import {
   BLANK,
   RULES,
@@ -12,10 +14,17 @@ import {
   UP,
   DIMENSION,
 } from './constants';
-import * as utils from './utils';
 
 export function sketch(c: p5) {
-  const FRAMERATE = 60;
+  // @ts-expect-error // TODO: type properly
+  const running = sketch.createControl('running', { type: 'checkbox', value: true });
+
+  // @ts-expect-error // TODO: type properly
+  const frameRate = sketch.createControl('framerate', {
+    type: 'select',
+    value: 30,
+    options: [5, 24, 30, 60],
+  });
 
   const OPTIONS: Option[] = [BLANK, UP, RIGHT, DOWN, LEFT];
 
@@ -164,9 +173,15 @@ export function sketch(c: p5) {
   }
 
   c.setup = function setup() {
-    c.frameRate(FRAMERATE);
     c.createCanvas(c.windowWidth, c.windowHeight);
     c.colorMode(c.HSB);
+
+    effect(() => c.frameRate(Number(frameRate.value)));
+
+    effect(() => {
+      if (running.value && !c.isLooping()) c.loop();
+      if (c.isLooping() && !running.value) c.noLoop();
+    });
   };
 
   c.draw = function draw() {

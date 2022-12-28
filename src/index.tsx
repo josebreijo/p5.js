@@ -3,11 +3,11 @@ import { signal } from '@preact/signals';
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import p5 from 'p5';
 
-import type { Control, ControlSettings, ControlType, Experiment } from './types';
-import experimentList from './experiments';
+import type { Control, ControlSettings, Experiment } from './types';
 import storage from './modules/storage';
 import { Controls } from './components/Controls';
 import { SKETCH_NODE_ID, STORAGE_KEY } from './constants';
+import experimentList from './experiments';
 import './index.module.css';
 
 const experiments = experimentList as Experiment[];
@@ -18,15 +18,16 @@ if (!defaultExperiment) {
 }
 
 let sketchInstance: p5 | null = null;
+const experimentStorageId = STORAGE_KEY.ACTIVE_EXPERIMENT_ID;
 
 function App() {
   const initialExperimentId = useMemo(() => {
-    const storedExperimentId = storage.get(STORAGE_KEY.ACTIVE_EXPERIMENT_ID);
+    const storedExperimentId = storage.get(experimentStorageId);
     if (
       !storedExperimentId ||
       !experiments.find((experiment) => experiment.id === storedExperimentId)
     ) {
-      storage.remove(STORAGE_KEY.ACTIVE_EXPERIMENT_ID);
+      storage.remove(experimentStorageId);
     }
     return storedExperimentId || defaultExperiment.id;
   }, []);
@@ -49,11 +50,13 @@ function App() {
         throw new Error(`No experiment found with id "${experimentId}"!`);
       }
 
+      const sketchControls: Control[] = [];
+
       // @ts-ignore // TODO: type properly
-      activeExperiment.sketch.createControl = function createControl<
-        Type extends ControlType,
-        Settings extends ControlSettings[Type],
-      >(id: string, type: Type, settings: Settings) {
+      activeExperiment.sketch.createControl = function createControl(
+        id: string,
+        settings: ControlSettings,
+      ) {
         const data = signal(settings.value);
 
         function onChange(value: any) {
@@ -61,16 +64,18 @@ function App() {
           data.value = value;
         }
 
-        const newControl: Control = { id, data, onChange, type, settings };
-        setControls((previousControls) => [...previousControls, newControl]);
+        const newControl: Control = { id, data, onChange, settings };
+        sketchControls.push(newControl);
 
         return data;
       };
 
+      setControls(sketchControls);
+
       sketchInstance = new p5(activeExperiment.sketch, sketchNode);
       lastExperimentId.current = activeExperiment.id;
 
-      storage.set(STORAGE_KEY.ACTIVE_EXPERIMENT_ID, activeExperiment.id);
+      storage.set(experimentStorageId, activeExperiment.id);
     }
 
     return () => {
@@ -81,7 +86,7 @@ function App() {
     };
   }, [experimentId]);
 
-  function changeSketch(event: Event) {
+  function changeExperiment(event: Event) {
     const target = event.target as HTMLSelectElement;
     setExperimentId(target.value);
   }
@@ -89,10 +94,10 @@ function App() {
   return (
     <main>
       <Controls
+        controls={controls}
         experiments={experiments}
         activeExperimentId={experimentId}
-        changeExperiment={changeSketch}
-        controls={controls}
+        changeExperiment={changeExperiment}
       />
 
       <section id={SKETCH_NODE_ID} />

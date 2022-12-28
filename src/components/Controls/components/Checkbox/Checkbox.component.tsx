@@ -6,10 +6,5 @@ export function Checkbox({ id, data, onChange }: Control) {
     event.stopPropagation();
   }
 
-  return (
-    <label for={id}>
-      {id}
-      <input id={id} type="checkbox" checked={data.value} onChange={onCheckboxChange} />
-    </label>
-  );
+  return <input id={id} type="checkbox" checked={data.value} onChange={onCheckboxChange} />;
 }
