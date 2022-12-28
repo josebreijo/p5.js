@@ -1,4 +1,4 @@
-import type { Position } from 'app/types';
+import type { Position } from '../types';
 
 function getIndex(upperBound: number, position: Position): number {
   return position.x + position.y * upperBound;
@@ -11,4 +11,4 @@ function getPosition(upperBound: number, index: number): Position {
   };
 }
 
-export { getIndex, getPosition };
+export default { getIndex, getPosition };

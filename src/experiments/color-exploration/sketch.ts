@@ -3,11 +3,9 @@ import p5 from 'p5';
 export function sketch(c: p5) {
   const FRAMERATE = 60;
 
-  let hue = 50;
+  let hue = 0;
   let saturation = 100;
   let lightness = 50;
-  let currentColor = '';
-  let running = true;
 
   c.setup = function setup() {
     c.frameRate(FRAMERATE);
@@ -26,10 +24,10 @@ export function sketch(c: p5) {
     saturation = c.int(mouseDeltaX);
     lightness = c.int(mouseDeltaY);
 
-    c.fill(lightness > 50 ? 0 : 255);
+    c.fill(lightness > 60 ? 0 : 255);
     c.background(hue, saturation, lightness);
 
-    currentColor = `
+    const currentColor = `
       hue: ${c.int(hue)}
       saturation: ${saturation}
       lightness: ${lightness}`;
@@ -38,13 +36,12 @@ export function sketch(c: p5) {
   };
 
   c.mousePressed = function () {
-    const toggleAnimation = running ? c.noLoop : c.loop;
+    const toggleAnimation = c.isLooping() ? c.noLoop : c.loop;
     toggleAnimation.call(c);
 
-    running = !running;
-
-    if (!running) {
-      window.navigator.clipboard.writeText(currentColor);
+    if (!c.isLooping()) {
+      const hslColor = `hsl(${c.int(hue)}deg ${saturation}% ${lightness}%)`;
+      window.navigator.clipboard.writeText(hslColor);
     }
   };
 }
