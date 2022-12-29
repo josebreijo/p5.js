@@ -11,7 +11,7 @@ export type Serializable = string | number | boolean | null;
 
 export type Globals = Record<string, Serializable>;
 
-export type ControlType = 'select' | 'checkbox' | 'slider' | 'info';
+export type ControlType = 'select' | 'checkbox' | 'slider' | 'info' | 'text';
 
 export type ControlFactory = (controlProps: Control) => JSXInternal.Element;
 
@@ -50,7 +50,18 @@ export interface InfoControl extends ControlDefaults {
   defaultValue: string;
 }
 
-export type ControlSettings = SelectControl | CheckboxControl | SliderControl | InfoControl;
+// TODO: review props and augment base behavior
+export interface TextControl extends ControlDefaults {
+  type: 'text';
+  defaultValue: string;
+}
+
+export type ControlSettings =
+  | SelectControl
+  | CheckboxControl
+  | SliderControl
+  | InfoControl
+  | TextControl;
 
 export interface Control {
   data: Signal;

@@ -53,6 +53,7 @@ function App() {
 
       const experimentControls: Control[] = [];
 
+      // TODO: review approach and document
       activeExperiment.experiment.exposeControl = (settings: ControlSettings) => {
         const data = signal(settings.defaultValue);
 
