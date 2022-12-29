@@ -1,10 +1,10 @@
-import { Control } from '../../../../types';
+import { Control } from '../../types';
 import styles from './Select.module.css';
 
 export function Select({ data, onChange, settings }: Control) {
-  function onSelectChange(event: any) {
-    onChange(event.target.value);
-    event.stopPropagation();
+  function onSelectChange(event: Event) {
+    const target = event.target as HTMLSelectElement;
+    onChange(target.value);
   }
 
   if (settings.type !== 'select') {

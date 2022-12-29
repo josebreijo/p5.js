@@ -1,26 +1,36 @@
 import { effect } from '@preact/signals';
 
-import type { TextControl } from '../../types';
-import { Text } from '../../components/Text';
+import type { SelectControl } from '../../types';
+import { Select } from '../../components/Select';
 
 function ruleNumberControl(updateRule: (newRule: number) => void) {
-  const control: TextControl = {
-    type: 'text',
+  const control: SelectControl = {
+    type: 'select',
     defaultValue: '30',
+    options: [
+      '28',
+      '30',
+      '50',
+      '54',
+      '60',
+      '90',
+      '94',
+      '102',
+      '110',
+      '150',
+      '158',
+      '188',
+      '190',
+      '220',
+    ],
     id: 'rule-number',
     label: 'ruleset',
     description: 'Rule set to use',
-    component: Text,
+    component: Select,
     setup(c, data) {
       effect(() => {
-        const ruleNumber = Number.parseInt(data.value);
-
-        if (isNaN(ruleNumber)) {
-          console.error(`Unable to render rule ${data.value}`);
-          return;
-        }
-
-        updateRule(ruleNumber);
+        updateRule(Number(data.value));
+        c.redraw();
       });
     },
   };
