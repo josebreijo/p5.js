@@ -13,7 +13,6 @@ export function Slider({ settings, data, onChange }: Control) {
 
   return (
     <div class={styles.container}>
-      <span class={styles.value}>{data.value}</span>
       <input
         type="range"
         value={data.value}
@@ -24,6 +23,7 @@ export function Slider({ settings, data, onChange }: Control) {
         id={settings.id}
         class={styles.slider}
       />
+      <span class={styles.value}>{data.value}</span>
     </div>
   );
 }

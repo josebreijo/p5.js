@@ -1,4 +1,3 @@
-import { effect } from '@preact/signals';
 import p5 from 'p5';
 
 import type { Experiment } from '../../types';
@@ -19,10 +18,9 @@ import {
 
 // @ts-expect-error `exposeControl` defined in caller
 export const experiment: Experiment = (c: p5) => {
-  const globalControls = controls.buildGlobalControls(experiment);
-
-  const running = globalControls.running();
-  const frameRate = globalControls.frameRate();
+  const runningControl = experiment.exposeControl(controls.rendering.running);
+  const frameRateControl = experiment.exposeControl(controls.rendering.frameRate);
+  const frameCountControl = experiment.exposeControl(controls.rendering.frameCount);
 
   const OPTIONS: Option[] = [BLANK, UP, RIGHT, DOWN, LEFT];
 
@@ -171,18 +169,19 @@ export const experiment: Experiment = (c: p5) => {
   }
 
   c.setup = function setup() {
+    runningControl.setup(c, runningControl.data);
+    frameRateControl.setup(c, frameRateControl.data);
+    frameCountControl.setup(c, frameCountControl.data);
+
     c.createCanvas(c.windowWidth, c.windowHeight);
     c.colorMode(c.HSB);
-
-    effect(() => c.frameRate(Number(frameRate.value)));
-
-    effect(() => {
-      if (running.value && !c.isLooping()) c.loop();
-      if (c.isLooping() && !running.value) c.noLoop();
-    });
   };
 
   c.draw = function draw() {
+    runningControl.draw(c, runningControl.data);
+    frameRateControl.draw(c, frameRateControl.data);
+    frameCountControl.draw(c, frameCountControl.data);
+
     const collapsedTile = collapseTile(grid);
 
     if (!collapsedTile) {

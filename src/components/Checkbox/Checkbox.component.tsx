@@ -1,4 +1,4 @@
-import { Control } from '../../../../types';
+import { Control } from '../../types';
 import styles from './Checkbox.module.css';
 
 export function Checkbox({ settings, data, onChange }: Control) {
@@ -13,7 +13,6 @@ export function Checkbox({ settings, data, onChange }: Control) {
 
   return (
     <div class={styles.container}>
-      <span class={styles.value}>{data.value ? 'ON' : 'OFF'}</span>
       <input
         type="checkbox"
         checked={data.value}
@@ -21,6 +20,7 @@ export function Checkbox({ settings, data, onChange }: Control) {
         id={settings.id}
         class={styles.checkbox}
       />
+      <span class={styles.value}>{data.value ? 'ON' : 'OFF'}</span>
     </div>
   );
 }

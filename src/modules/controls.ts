@@ -1,31 +1,59 @@
-import { Experiment } from 'types';
+import p5 from 'p5';
 
-function buildGlobalControls(experiment: Experiment) {
-  function running() {
-    return experiment.exposeControl({
-      id: 'running',
-      label: 'Running',
-      type: 'checkbox',
-      value: true,
+import type { CheckboxControl, InfoControl, SliderControl } from '../types';
+import { Checkbox } from '../components/Checkbox';
+import { Slider } from '../components/Slider';
+import { Info } from '../components/Info';
+import { effect, Signal } from '@preact/signals';
+
+const running: CheckboxControl = {
+  type: 'checkbox',
+  defaultValue: true,
+  id: 'running',
+  label: 'running',
+  description: 'Whether the experiment is running or not',
+  component: Checkbox,
+  setup(c, data) {
+    effect(() => {
+      if (data.value && !c.isLooping()) c.loop();
+      if (c.isLooping() && !data.value) c.noLoop();
     });
-  }
+  },
+};
 
-  function frameRate() {
-    return experiment.exposeControl({
-      id: 'framerate',
-      label: 'Framerate',
-      type: 'slider',
-      value: 24,
-      min: 1,
-      max: 60,
-      step: 1,
-    });
-  }
+const frameRate: SliderControl = {
+  type: 'slider',
+  defaultValue: 24,
+  id: 'frameRate',
+  label: 'framerate',
+  description: 'Number of frames to display each second',
+  component: Slider,
+  min: 1,
+  max: 60,
+  step: 1,
+  setup(c, data) {
+    effect(() => c.frameRate(Number(data.value)));
+  },
+};
 
-  return {
+const frameCount: InfoControl = {
+  type: 'info',
+  defaultValue: '0',
+  id: 'frameCount',
+  label: 'frame',
+  description: 'Number of frames displayed since the program started',
+  component: Info,
+  draw(c, data) {
+    data.value = c.frameCount.toString();
+  },
+};
+
+const controls = {
+  rendering: {
     running,
     frameRate,
-  };
-}
+    frameCount,
+  },
+};
 
-export default { buildGlobalControls };
+export default controls;

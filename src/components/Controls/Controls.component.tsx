@@ -1,10 +1,6 @@
 import { IconAdjustmentsHorizontal } from '@tabler/icons';
-import type { JSXInternal } from 'preact/src/jsx';
 
-import type { Control, ControlType, ExperimentDefinition } from '../../types';
-import { Checkbox } from './components/Checkbox';
-import { Select } from './components/Select';
-import { Slider } from './components/Slider';
+import type { Control, ExperimentDefinition } from '../../types';
 import styles from './Controls.module.css';
 
 interface ControlsProps {
@@ -13,14 +9,6 @@ interface ControlsProps {
   experiments: ExperimentDefinition[];
   controls: Control[];
 }
-
-type ControlFactory = (controlProps: Control) => JSXInternal.Element;
-
-const controlFactory: Record<ControlType, ControlFactory> = {
-  checkbox: Checkbox,
-  select: Select,
-  slider: Slider,
-};
 
 export function Controls({
   experiments,
@@ -50,7 +38,7 @@ export function Controls({
 
       <div class={styles.controls}>
         {controls.map((control) => {
-          const ControlComponent = controlFactory[control.settings.type];
+          const ControlComponent = control.settings.component;
 
           return (
             <label class={styles.control} for={control.settings.id} key={control.settings.id}>

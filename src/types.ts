@@ -1,4 +1,5 @@
-import { Signal } from '@preact/signals';
+import type { Signal } from '@preact/signals';
+import { JSXInternal } from 'preact/src/jsx';
 import p5 from 'p5';
 
 export interface Position {
@@ -10,36 +11,46 @@ export type Serializable = string | number | boolean | null;
 
 export type Globals = Record<string, Serializable>;
 
-export type ControlType = 'select' | 'checkbox' | 'slider';
+export type ControlType = 'select' | 'checkbox' | 'slider' | 'info';
+
+export type ControlFactory = (controlProps: Control) => JSXInternal.Element;
 
 export interface ControlDefaults {
   id: string;
   label: string;
   description?: string;
   type: ControlType;
-  value: Serializable;
+  defaultValue: Serializable;
+  component: ControlFactory;
+  setup?: (c: p5, data: Signal) => void;
+  draw?: (c: p5, data: Signal) => void;
 }
 
 export interface SelectControl extends ControlDefaults {
   type: 'select';
-  value: string;
+  defaultValue: string;
   options: string[];
 }
 
 export interface CheckboxControl extends ControlDefaults {
   type: 'checkbox';
-  value: boolean;
+  defaultValue: boolean;
 }
 
 export interface SliderControl extends ControlDefaults {
   type: 'slider';
-  value: number;
+  defaultValue: number;
   min: number;
   max: number;
   step: number;
 }
 
-export type ControlSettings = SelectControl | CheckboxControl | SliderControl;
+export interface InfoControl extends ControlDefaults {
+  type: 'info';
+  defaultValue: string;
+}
+
+export type ControlSettings = SelectControl | CheckboxControl | SliderControl | InfoControl;
 
 export interface Control {
   data: Signal;
@@ -47,9 +58,16 @@ export interface Control {
   settings: ControlSettings;
 }
 
+export interface ControlSignal {
+  data: any;
+  setup: (c: p5, data: Signal) => void;
+  draw: (c: p5, data: Signal) => void;
+}
+
 export interface Experiment {
   (c: p5): void;
-  exposeControl: (settings: ControlSettings) => Signal;
+  // TODO: document
+  exposeControl: (settings: ControlSettings) => ControlSignal;
 }
 
 export interface ExperimentDefinition {

@@ -50,7 +50,7 @@
 
 .control {
   display: grid;
-  grid-template-columns: min-content 1fr;
+  grid-template-columns: 1fr max-content;
   gap: 1rem;
   align-items: center;
   padding-bottom: 0.5rem;

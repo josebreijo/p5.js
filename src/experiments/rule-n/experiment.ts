@@ -1,4 +1,3 @@
-import { effect } from '@preact/signals';
 import p5 from 'p5';
 
 import type { Experiment } from '../../types';
@@ -8,10 +7,9 @@ import utils from './utils';
 
 // @ts-expect-error `exposeControl` defined in caller
 export const experiment: Experiment = (c: p5) => {
-  const globalControls = controls.buildGlobalControls(experiment);
-
-  const running = globalControls.running();
-  const frameRate = globalControls.frameRate();
+  const runningControl = experiment.exposeControl(controls.rendering.running);
+  const frameRateControl = experiment.exposeControl(controls.rendering.frameRate);
+  const frameCountControl = experiment.exposeControl(controls.rendering.frameCount);
 
   const CELL_SIZE = 4;
   const gridLength = c.ceil(c.windowWidth / CELL_SIZE);
@@ -24,23 +22,24 @@ export const experiment: Experiment = (c: p5) => {
   let cells: Bit[] = Array.from({ length: gridLength * 2 }, () => 0);
 
   c.setup = function setup() {
+    runningControl.setup(c, runningControl.data);
+    frameRateControl.setup(c, frameRateControl.data);
+    frameCountControl.setup(c, frameCountControl.data);
+
+    cells[c.floor(gridLength / 2)] = 1;
+
     c.createCanvas(c.windowWidth, c.windowHeight);
     c.colorMode(c.HSB);
     c.background(0);
     c.fill(255);
     c.strokeWeight(1);
-
-    cells[c.floor(gridLength / 2)] = 1;
-
-    effect(() => c.frameRate(Number(frameRate.value)));
-
-    effect(() => {
-      if (running.value && !c.isLooping()) c.loop();
-      if (c.isLooping() && !running.value) c.noLoop();
-    });
   };
 
   c.draw = function draw() {
+    runningControl.draw(c, runningControl.data);
+    frameRateControl.draw(c, frameRateControl.data);
+    frameCountControl.draw(c, frameCountControl.data);
+
     const hue = c.int(c.map(epoch, 0, c.windowHeight, 0, 360));
     c.stroke(hue, 100, 100);
 

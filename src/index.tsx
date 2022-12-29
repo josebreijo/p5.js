@@ -3,7 +3,7 @@ import { signal } from '@preact/signals';
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import p5 from 'p5';
 
-import type { Control, ControlSettings, ExperimentDefinition } from './types';
+import type { Control, ControlSettings, ControlSignal, ExperimentDefinition } from './types';
 import storage from './modules/storage';
 import { Controls } from './components/Controls';
 import { SKETCH_NODE_ID, STORAGE_KEY } from './constants';
@@ -19,6 +19,7 @@ if (!defaultExperiment) {
 
 let sketchInstance: p5 | null = null;
 const experimentStorageId = STORAGE_KEY.ACTIVE_EXPERIMENT_ID;
+const noop = () => {};
 
 function App() {
   const initialExperimentId = useMemo(() => {
@@ -53,17 +54,21 @@ function App() {
       const experimentControls: Control[] = [];
 
       activeExperiment.experiment.exposeControl = (settings: ControlSettings) => {
-        const data = signal(settings.value);
+        const data = signal(settings.defaultValue);
 
         function onChange(value: any) {
-          console.log(`"${settings.id}": ${data.peek()} => ${value}`);
           data.value = value;
         }
 
-        const control: Control = { data, onChange, settings };
-        experimentControls.push(control);
+        experimentControls.push({ data, onChange, settings });
 
-        return data;
+        const controlSignal: ControlSignal = {
+          data,
+          draw: settings.draw || noop,
+          setup: settings.setup || noop,
+        };
+
+        return controlSignal;
       };
 
       sketchInstance = new p5(activeExperiment.experiment, sketchNode);
