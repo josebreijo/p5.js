@@ -1,11 +1,11 @@
-import type { Experiment } from '../../types';
-import { sketch } from './sketch';
+import type { ExperimentDefinition } from '../../types';
+import { experiment } from './experiment';
 
-const experiment: Experiment = {
+const experimentDefinition: ExperimentDefinition = {
   id: 'rule-n',
   name: 'Rule-N Cellular Automata',
   url: 'https://en.wikipedia.org/wiki/Rule_30',
-  sketch,
+  experiment,
 };
 
-export default experiment;
+export default experimentDefinition;

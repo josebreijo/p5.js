@@ -10,23 +10,52 @@ export type Serializable = string | number | boolean | null;
 
 export type Globals = Record<string, Serializable>;
 
-export interface Experiment {
+export type ControlType = 'select' | 'checkbox' | 'slider';
+
+export interface ControlDefaults {
   id: string;
-  name: string;
-  sketch: (p: p5) => void;
+  label: string;
   description?: string;
-  url?: string;
+  type: ControlType;
+  value: Serializable;
 }
 
-export type ControlSettings = {
-  id: string;
-  name: string;
-  description?: string;
-} & ({ type: 'select'; value: string; options: string[] } | { type: 'checkbox'; value: boolean });
+export interface SelectControl extends ControlDefaults {
+  type: 'select';
+  value: string;
+  options: string[];
+}
+
+export interface CheckboxControl extends ControlDefaults {
+  type: 'checkbox';
+  value: boolean;
+}
+
+export interface SliderControl extends ControlDefaults {
+  type: 'slider';
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+}
+
+export type ControlSettings = SelectControl | CheckboxControl | SliderControl;
 
 export interface Control {
-  id: string;
   data: Signal;
   onChange: (value: any) => void;
   settings: ControlSettings;
+}
+
+export interface Experiment {
+  (c: p5): void;
+  exposeControl: (settings: ControlSettings) => Signal;
+}
+
+export interface ExperimentDefinition {
+  id: string;
+  name: string;
+  experiment: Experiment;
+  description?: string;
+  url?: string;
 }

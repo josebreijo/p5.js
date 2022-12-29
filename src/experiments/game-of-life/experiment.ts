@@ -1,7 +1,11 @@
 import { effect } from '@preact/signals';
 import p5 from 'p5';
 
-function sketch(c: p5) {
+import type { Experiment } from '../../types';
+import controls from '../../modules/controls';
+
+// @ts-expect-error `exposeControl` defined in caller
+export const experiment: Experiment = (c: p5) => {
   const SIZE = 40;
   const DEAD = 0;
   const ALIVE = 1;
@@ -11,15 +15,10 @@ function sketch(c: p5) {
   let population: number[][] = [];
   let cellSize = c.windowWidth / SIZE;
 
-  // @ts-expect-error // TODO: type properly
-  const running = sketch.createControl('running', { type: 'checkbox', value: true });
+  const globalControls = controls.buildGlobalControls(experiment);
 
-  // @ts-expect-error // TODO: type properly
-  const frameRate = sketch.createControl('framerate', {
-    type: 'select',
-    value: 30,
-    options: [5, 24, 30, 60],
-  });
+  const running = globalControls.running();
+  const frameRate = globalControls.frameRate();
 
   function generatePopulation(size: number, { random = true } = {}) {
     return Array.from({ length: size }, () =>
@@ -91,6 +90,4 @@ function sketch(c: p5) {
 
     population = nextGen;
   };
-}
-
-export { sketch };
+};

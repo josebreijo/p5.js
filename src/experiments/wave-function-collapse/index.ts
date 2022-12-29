@@ -1,11 +1,11 @@
-import type { Experiment } from '../../types';
-import { sketch } from './sketch';
+import type { ExperimentDefinition } from '../../types';
+import { experiment } from './experiment';
 
-const experiment: Experiment = {
+const experimentDefinition: ExperimentDefinition = {
   id: 'wave-function-collapse',
   name: 'Wave Function Collapse',
   url: 'https://en.wikipedia.org/wiki/Wave_function_collapse',
-  sketch,
+  experiment,
 };
 
-export default experiment;
+export default experimentDefinition;

@@ -1,10 +1,26 @@
 import { Control } from '../../../../types';
+import styles from './Checkbox.module.css';
 
-export function Checkbox({ id, data, onChange }: Control) {
+export function Checkbox({ settings, data, onChange }: Control) {
   function onCheckboxChange(event: any) {
     onChange(event.target.checked);
     event.stopPropagation();
   }
 
-  return <input id={id} type="checkbox" checked={data.value} onChange={onCheckboxChange} />;
+  if (settings.type !== 'checkbox') {
+    throw new Error(`Incorrect component type "${settings.type}"!`);
+  }
+
+  return (
+    <div class={styles.container}>
+      <span class={styles.value}>{data.value ? 'ON' : 'OFF'}</span>
+      <input
+        type="checkbox"
+        checked={data.value}
+        onChange={onCheckboxChange}
+        id={settings.id}
+        class={styles.checkbox}
+      />
+    </div>
+  );
 }

@@ -1,7 +1,9 @@
 import { effect } from '@preact/signals';
 import p5 from 'p5';
 
+import type { Experiment } from '../../types';
 import type { Option, Tile } from './types';
+import controls from '../../modules/controls';
 import * as utils from './utils';
 import {
   BLANK,
@@ -15,16 +17,12 @@ import {
   DIMENSION,
 } from './constants';
 
-export function sketch(c: p5) {
-  // @ts-expect-error // TODO: type properly
-  const running = sketch.createControl('running', { type: 'checkbox', value: true });
+// @ts-expect-error `exposeControl` defined in caller
+export const experiment: Experiment = (c: p5) => {
+  const globalControls = controls.buildGlobalControls(experiment);
 
-  // @ts-expect-error // TODO: type properly
-  const frameRate = sketch.createControl('framerate', {
-    type: 'select',
-    value: 30,
-    options: [5, 24, 30, 60],
-  });
+  const running = globalControls.running();
+  const frameRate = globalControls.frameRate();
 
   const OPTIONS: Option[] = [BLANK, UP, RIGHT, DOWN, LEFT];
 
@@ -200,4 +198,4 @@ export function sketch(c: p5) {
   c.windowResized = function () {
     c.resizeCanvas(c.windowWidth, c.windowHeight);
   };
-}
+};

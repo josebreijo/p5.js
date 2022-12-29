@@ -4,12 +4,13 @@
   top: var(--space);
   right: var(--space);
   opacity: 0.25;
+  color: white;
   background-color: black;
-  border-radius: 3px;
+  border-radius: 4px;
   transition: opacity 0.25s ease-in-out;
   display: flex;
   flex-direction: column;
-  padding: 0.5rem;
+  padding: 1rem;
   font-family: 'Iosevka', monospace;
   user-select: none;
 }
@@ -22,13 +23,12 @@
 
 .header {
   display: flex;
-  justify-content: baseline;
   align-items: center;
   padding-bottom: 0.5rem;
 }
 
 .header svg {
-  width: 1rem;
+  width: 1.5rem;
 }
 
 .header span {
@@ -50,11 +50,13 @@
 
 .control {
   display: grid;
-  grid-template-columns: 1fr min-content;
-  align-items: baseline;
-  text-align: left;
+  grid-template-columns: min-content 1fr;
+  gap: 1rem;
+  align-items: center;
+  padding-bottom: 0.5rem;
 }
 
-.id {
+.label {
   display: inline-block;
+  font-weight: bold;
 }

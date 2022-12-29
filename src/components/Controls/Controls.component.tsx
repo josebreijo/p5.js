@@ -1,24 +1,25 @@
-import { useState } from 'preact/hooks';
 import { IconAdjustmentsHorizontal } from '@tabler/icons';
-
 import type { JSXInternal } from 'preact/src/jsx';
-import type { Control, ControlSettings, Experiment } from '../../types';
+
+import type { Control, ControlType, ExperimentDefinition } from '../../types';
 import { Checkbox } from './components/Checkbox';
 import { Select } from './components/Select';
+import { Slider } from './components/Slider';
 import styles from './Controls.module.css';
 
 interface ControlsProps {
   activeExperimentId: string;
   changeExperiment: (event: Event) => void;
-  experiments: Experiment[];
+  experiments: ExperimentDefinition[];
   controls: Control[];
 }
 
-type ControlFactory = (...args: any[]) => JSXInternal.Element;
+type ControlFactory = (controlProps: Control) => JSXInternal.Element;
 
-const factory: Record<ControlSettings['type'], ControlFactory> = {
+const controlFactory: Record<ControlType, ControlFactory> = {
   checkbox: Checkbox,
   select: Select,
+  slider: Slider,
 };
 
 export function Controls({
@@ -49,18 +50,13 @@ export function Controls({
 
       <div class={styles.controls}>
         {controls.map((control) => {
-          const Component = factory[control.settings.type];
+          const ControlComponent = controlFactory[control.settings.type];
 
           return (
-            <label class={styles.control} for={control.id}>
-              <span class={styles.id}>{control.id}</span>
-              <Component
-                id={control.id}
-                data={control.data}
-                onChange={control.onChange}
-                type={control.settings.type}
-                settings={control.settings}
-              />
+            <label class={styles.control} for={control.settings.id} key={control.settings.id}>
+              <span class={styles.label}>{control.settings.label}</span>
+
+              <ControlComponent {...control} />
             </label>
           );
         })}

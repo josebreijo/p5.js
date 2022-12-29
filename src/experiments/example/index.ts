@@ -1,12 +1,12 @@
-import type { Experiment } from '../../types';
-import { sketch } from './sketch';
+import type { ExperimentDefinition } from '../../types';
+import { experiment } from './experiment';
 
-const experiment: Experiment = {
+const experimentDefinition: ExperimentDefinition = {
   id: 'experiment-id',
   name: 'Experiment title',
   description: 'Experiment description',
   url: 'https://example.com',
-  sketch,
+  experiment,
 };
 
-export default experiment;
+export default experimentDefinition;

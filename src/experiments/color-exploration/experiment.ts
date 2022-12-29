@@ -1,16 +1,15 @@
 import { effect } from '@preact/signals';
 import p5 from 'p5';
 
-export function sketch(c: p5) {
-  // @ts-expect-error // TODO: type properly
-  const running = sketch.createControl('running', { type: 'checkbox', value: true });
+import type { Experiment } from '../../types';
+import controls from '../../modules/controls';
 
-  // @ts-expect-error // TODO: type properly
-  const frameRate = sketch.createControl('framerate', {
-    type: 'select',
-    value: 30,
-    options: [5, 24, 30, 60],
-  });
+// @ts-expect-error `exposeControl` defined in caller
+export const experiment: Experiment = (c: p5) => {
+  const globalControls = controls.buildGlobalControls(experiment);
+
+  const running = globalControls.running();
+  const frameRate = globalControls.frameRate();
 
   let hue = 0;
   let saturation = 100;
@@ -61,4 +60,4 @@ export function sketch(c: p5) {
       window.navigator.clipboard.writeText(hslColor);
     }
   };
-}
+};

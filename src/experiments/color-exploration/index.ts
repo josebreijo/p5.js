@@ -1,10 +1,10 @@
-import type { Experiment } from '../../types';
-import { sketch } from './sketch';
+import type { ExperimentDefinition } from '../../types';
+import { experiment } from './experiment';
 
-const experiment: Experiment = {
+const experimentDefinition: ExperimentDefinition = {
   id: 'color-exploration',
   name: 'Color Exploration',
-  sketch,
+  experiment,
 };
 
-export default experiment;
+export default experimentDefinition;

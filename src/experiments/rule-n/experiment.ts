@@ -1,19 +1,17 @@
 import { effect } from '@preact/signals';
 import p5 from 'p5';
 
-import { Bit } from './types';
+import type { Experiment } from '../../types';
+import type { Bit } from './types';
+import controls from '../../modules/controls';
 import utils from './utils';
 
-function sketch(c: p5) {
-  // @ts-expect-error // TODO: type properly
-  const running = sketch.createControl('running', { type: 'checkbox', value: true });
+// @ts-expect-error `exposeControl` defined in caller
+export const experiment: Experiment = (c: p5) => {
+  const globalControls = controls.buildGlobalControls(experiment);
 
-  // @ts-expect-error // TODO: type properly
-  const frameRate = sketch.createControl('framerate', {
-    type: 'select',
-    value: 30,
-    options: [5, 24, 30, 60],
-  });
+  const running = globalControls.running();
+  const frameRate = globalControls.frameRate();
 
   const CELL_SIZE = 4;
   const gridLength = c.ceil(c.windowWidth / CELL_SIZE);
@@ -70,6 +68,4 @@ function sketch(c: p5) {
       c.noLoop();
     }
   };
-}
-
-export { sketch };
+};

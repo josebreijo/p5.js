@@ -3,14 +3,14 @@ import { signal } from '@preact/signals';
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import p5 from 'p5';
 
-import type { Control, ControlSettings, Experiment } from './types';
+import type { Control, ControlSettings, ExperimentDefinition } from './types';
 import storage from './modules/storage';
 import { Controls } from './components/Controls';
 import { SKETCH_NODE_ID, STORAGE_KEY } from './constants';
 import experimentList from './experiments';
 import './index.module.css';
 
-const experiments = experimentList as Experiment[];
+const experiments = experimentList as ExperimentDefinition[];
 const [defaultExperiment] = experiments;
 
 if (!defaultExperiment) {
@@ -50,32 +50,27 @@ function App() {
         throw new Error(`No experiment found with id "${experimentId}"!`);
       }
 
-      const sketchControls: Control[] = [];
+      const experimentControls: Control[] = [];
 
-      // @ts-ignore // TODO: type properly
-      activeExperiment.sketch.createControl = function createControl(
-        id: string,
-        settings: ControlSettings,
-      ) {
+      activeExperiment.experiment.exposeControl = (settings: ControlSettings) => {
         const data = signal(settings.value);
 
         function onChange(value: any) {
-          console.log(`"${id}": ${data.peek()} => ${value}`);
+          console.log(`"${settings.id}": ${data.peek()} => ${value}`);
           data.value = value;
         }
 
-        const newControl: Control = { id, data, onChange, settings };
-        sketchControls.push(newControl);
+        const control: Control = { data, onChange, settings };
+        experimentControls.push(control);
 
         return data;
       };
 
-      setControls(sketchControls);
-
-      sketchInstance = new p5(activeExperiment.sketch, sketchNode);
+      sketchInstance = new p5(activeExperiment.experiment, sketchNode);
       lastExperimentId.current = activeExperiment.id;
 
       storage.set(experimentStorageId, activeExperiment.id);
+      setControls(experimentControls);
     }
 
     return () => {
