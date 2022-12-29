@@ -17,6 +17,10 @@ export const experiment: Experiment = (c: p5) => {
   let epoch = 0;
   let cells: Bit[] = Array.from({ length: gridLength * 2 }, () => 0);
 
+  const runningControl = experiment.exposeControl(controls.rendering.running);
+  const frameRateControl = experiment.exposeControl(controls.rendering.frameRate);
+  const frameCountControl = experiment.exposeControl(controls.rendering.frameCount);
+
   function updateRule(newRule: number) {
     rule = newRule;
     ruleSet = utils.generateRuleSet(rule);
@@ -26,13 +30,10 @@ export const experiment: Experiment = (c: p5) => {
 
     // TODO: allow to update the seed as well
     cells[c.ceil(gridLength / 2)] = 1;
+    runningControl.data.value = true;
 
     c.clear(0, 0, 0, 0);
   }
-
-  const runningControl = experiment.exposeControl(controls.rendering.running);
-  const frameRateControl = experiment.exposeControl(controls.rendering.frameRate);
-  const frameCountControl = experiment.exposeControl(controls.rendering.frameCount);
 
   // TODO: generalize the concept of restarting an experiment via this pattern
   const ruleNumberControl = experiment.exposeControl(
@@ -84,7 +85,7 @@ export const experiment: Experiment = (c: p5) => {
     epoch += 1;
 
     if (epoch > lifespan) {
-      c.noLoop();
+      runningControl.data.value = false;
     }
   };
 };
