@@ -16,11 +16,8 @@ function ruleNumberControl(updateRule: (newRule: number) => void) {
     label: 'ruleset',
     description: 'Rule set to use',
     component: Select,
-    setup(c, data) {
-      effect(() => {
-        updateRule(Number(data.value));
-        c.redraw();
-      });
+    setup(_, data) {
+      effect(() => updateRule(Number(data.value)));
     },
   };
 

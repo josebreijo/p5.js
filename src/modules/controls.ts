@@ -1,7 +1,6 @@
 import { effect } from '@preact/signals';
-import p5 from 'p5';
 
-import type { CheckboxControl, InfoControl, SliderControl, TextControl } from '../types';
+import type { CheckboxControl, InfoControl, SliderControl } from '../types';
 import { Checkbox } from '../components/Checkbox';
 import { Slider } from '../components/Slider';
 import { Info } from '../components/Info';
