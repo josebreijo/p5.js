@@ -1,13 +1,15 @@
 import p5 from 'p5';
 
 import type { Experiment } from '../../types';
-import controls from '../../modules/controls';
+import builtinControls from '../../controls';
 
 // @ts-expect-error `exposeControl` defined in caller
 export const experiment: Experiment = (c: p5) => {
-  const runningControl = experiment.exposeControl(controls.rendering.running);
-  const frameRateControl = experiment.exposeControl(controls.rendering.frameRate);
-  const frameCountControl = experiment.exposeControl(controls.rendering.frameCount);
+  const controls = experiment.registerControls([
+    builtinControls.rendering.running,
+    builtinControls.rendering.frameRate,
+    builtinControls.rendering.frameCount,
+  ]);
 
   const SIZE = 40;
   const DEAD = 0;
@@ -53,9 +55,7 @@ export const experiment: Experiment = (c: p5) => {
   }
 
   c.setup = function setup() {
-    runningControl.setup(c, runningControl.data);
-    frameRateControl.setup(c, frameRateControl.data);
-    frameCountControl.setup(c, frameCountControl.data);
+    controls.setup(c);
 
     population = generatePopulation(SIZE);
 
@@ -66,9 +66,7 @@ export const experiment: Experiment = (c: p5) => {
   };
 
   c.draw = function draw() {
-    runningControl.draw(c, runningControl.data);
-    frameRateControl.draw(c, frameRateControl.data);
-    frameCountControl.draw(c, frameCountControl.data);
+    controls.draw(c);
 
     drawGrid();
 

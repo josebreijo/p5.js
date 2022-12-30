@@ -47,12 +47,4 @@ const frameCount: InfoControlSettings = {
   },
 };
 
-const controls = {
-  rendering: {
-    running,
-    frameRate,
-    frameCount,
-  },
-};
-
-export default controls;
+export default { running, frameRate, frameCount };

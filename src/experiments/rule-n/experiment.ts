@@ -2,7 +2,7 @@ import p5 from 'p5';
 
 import type { Experiment } from '../../types';
 import type { Bit } from './types';
-import controls from '../../modules/controls';
+import builtinControls from '../../controls';
 import experimentControls from './controls';
 import utils from './utils';
 
@@ -17,34 +17,27 @@ export const experiment: Experiment = (c: p5) => {
   let epoch = 0;
   let cells: Bit[] = Array.from({ length: gridLength * 2 }, () => 0);
 
-  const runningControl = experiment.exposeControl(controls.rendering.running);
-  const frameRateControl = experiment.exposeControl(controls.rendering.frameRate);
-  const frameCountControl = experiment.exposeControl(controls.rendering.frameCount);
+  const controls = experiment.registerControls([
+    builtinControls.rendering.running,
+    builtinControls.rendering.frameRate,
+    builtinControls.rendering.frameCount,
+  ]);
 
-  function updateRule(newRule: number) {
+  function resetSketch(newRule: number) {
     rule = newRule;
     ruleSet = utils.generateRuleSet(rule);
-
     epoch = 0;
     cells = Array.from({ length: gridLength * 2 }, () => 0);
-
-    // TODO: allow to update the seed as well
     cells[c.ceil(gridLength / 2)] = 1;
-    runningControl.data.value = true;
-
+    controls.signals.running.value = true;
     c.clear(0, 0, 0, 0);
   }
 
-  // TODO: generalize the concept of restarting an experiment via this pattern
-  const ruleNumberControl = experiment.exposeControl(
-    experimentControls.ruleNumberControl(updateRule),
-  );
+  const customControls = experiment.registerControls([experimentControls.ruleNumber(resetSketch)]);
 
   c.setup = function setup() {
-    runningControl.setup(c, runningControl.data);
-    frameRateControl.setup(c, frameRateControl.data);
-    frameCountControl.setup(c, frameCountControl.data);
-    ruleNumberControl.setup(c, ruleNumberControl.data);
+    controls.setup(c);
+    customControls.setup(c);
 
     cells[c.floor(gridLength / 2)] = 1;
 
@@ -56,10 +49,8 @@ export const experiment: Experiment = (c: p5) => {
   };
 
   c.draw = function draw() {
-    runningControl.draw(c, runningControl.data);
-    frameRateControl.draw(c, frameRateControl.data);
-    frameCountControl.draw(c, frameCountControl.data);
-    ruleNumberControl.draw(c, ruleNumberControl.data);
+    controls.draw(c);
+    customControls.draw(c);
 
     const hue = c.int(c.map(epoch, 0, c.windowHeight, 0, 360));
     c.stroke(hue, 100, 100);
@@ -85,7 +76,7 @@ export const experiment: Experiment = (c: p5) => {
     epoch += 1;
 
     if (epoch > lifespan) {
-      runningControl.data.value = false;
+      controls.signals.running.value = false;
     }
   };
 };

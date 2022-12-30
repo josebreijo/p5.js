@@ -69,16 +69,16 @@ export interface Control {
   settings: ControlSettings;
 }
 
-export interface ControlSignal {
-  data: any;
-  setup: (c: p5, data: Signal) => void;
-  draw: (c: p5, data: Signal) => void;
+export interface ExperimentControls {
+  setup(c: p5): void;
+  draw(c: p5): void;
+  signals: Record<string, Signal>;
 }
 
 export interface Experiment {
   (c: p5): void;
-  // TODO: document
-  exposeControl: (settings: ControlSettings) => ControlSignal;
+  // TODO: document & type properly
+  registerControls: (settings: ControlSettings[]) => ExperimentControls;
 }
 
 export interface ExperimentDefinition {

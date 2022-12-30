@@ -7,12 +7,12 @@ const options = [28, 30, 50, 54, 60, 90, 94, 102, 110, 150, 158, 188, 190, 220].
   rule.toString(),
 );
 
-function ruleNumberControl(updateRule: (newRule: number) => void) {
+function ruleNumber(updateRule: (newRule: number) => void) {
   const control: SelectControlSettings = {
     type: 'select',
     defaultValue: '30',
     options,
-    id: 'rule-number',
+    id: 'ruleNumber',
     label: 'ruleset',
     description: 'Rule set to use',
     component: Select,
@@ -24,4 +24,4 @@ function ruleNumberControl(updateRule: (newRule: number) => void) {
   return control;
 }
 
-export default { ruleNumberControl };
+export default { ruleNumber };
