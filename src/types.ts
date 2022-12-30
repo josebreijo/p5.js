@@ -26,18 +26,18 @@ export interface ControlDefaults {
   draw?: (c: p5, data: Signal) => void;
 }
 
-export interface SelectControl extends ControlDefaults {
+export interface SelectControlSettings extends ControlDefaults {
   type: 'select';
   defaultValue: string;
   options: string[];
 }
 
-export interface CheckboxControl extends ControlDefaults {
+export interface CheckboxControlSettings extends ControlDefaults {
   type: 'checkbox';
   defaultValue: boolean;
 }
 
-export interface SliderControl extends ControlDefaults {
+export interface SliderControlSettings extends ControlDefaults {
   type: 'slider';
   defaultValue: number;
   min: number;
@@ -45,23 +45,23 @@ export interface SliderControl extends ControlDefaults {
   step: number;
 }
 
-export interface InfoControl extends ControlDefaults {
+export interface InfoControlSettings extends ControlDefaults {
   type: 'info';
   defaultValue: string;
 }
 
 // TODO: review props and augment base behavior
-export interface TextControl extends ControlDefaults {
+export interface TextControlSettings extends ControlDefaults {
   type: 'text';
   defaultValue: string;
 }
 
 export type ControlSettings =
-  | SelectControl
-  | CheckboxControl
-  | SliderControl
-  | InfoControl
-  | TextControl;
+  | SelectControlSettings
+  | CheckboxControlSettings
+  | SliderControlSettings
+  | InfoControlSettings
+  | TextControlSettings;
 
 export interface Control {
   data: Signal;

@@ -4,10 +4,10 @@ import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import p5 from 'p5';
 
 import type { Control, ControlSettings, ControlSignal, ExperimentDefinition } from './types';
-import storage from './modules/storage';
-import { Controls } from './components/Controls';
 import { SKETCH_NODE_ID, STORAGE_KEY } from './constants';
+import { Controls } from './components/Controls';
 import experimentList from './experiments';
+import storage from './modules/storage';
 import './index.module.css';
 
 const experiments = experimentList as ExperimentDefinition[];

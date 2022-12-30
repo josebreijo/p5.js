@@ -1,11 +1,11 @@
 import { effect } from '@preact/signals';
 
-import type { CheckboxControl, InfoControl, SliderControl } from '../types';
+import type { CheckboxControlSettings, InfoControlSettings, SliderControlSettings } from '../types';
 import { Checkbox } from '../components/Checkbox';
 import { Slider } from '../components/Slider';
 import { Info } from '../components/Info';
 
-const running: CheckboxControl = {
+const running: CheckboxControlSettings = {
   type: 'checkbox',
   defaultValue: true,
   id: 'running',
@@ -20,7 +20,7 @@ const running: CheckboxControl = {
   },
 };
 
-const frameRate: SliderControl = {
+const frameRate: SliderControlSettings = {
   type: 'slider',
   defaultValue: 24,
   id: 'frameRate',
@@ -35,7 +35,7 @@ const frameRate: SliderControl = {
   },
 };
 
-const frameCount: InfoControl = {
+const frameCount: InfoControlSettings = {
   type: 'info',
   defaultValue: '0',
   id: 'frameCount',

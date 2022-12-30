@@ -10,5 +10,6 @@
 }
 
 .slider {
+  -webkit-tap-highlight-color: transparent;
   width: 100%;
 }
