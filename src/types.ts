@@ -15,6 +15,8 @@ export type Globals = Record<string, Serializable>;
 
 export type ControlType = 'select' | 'checkbox' | 'slider' | 'info' | 'text' | 'color';
 
+export type ControlCategory = 'rendering' | 'custom';
+
 export type ControlFactory = (controlProps: Control) => JSXInternal.Element;
 
 export type ControlRenderFn = (c: p5, data: Signal) => void;
@@ -28,6 +30,7 @@ export interface ControlDefaults {
   component: ControlFactory;
   setup?: ControlRenderFn;
   draw?: ControlRenderFn;
+  category?: ControlCategory;
 }
 
 export interface SelectControlSettings extends ControlDefaults {

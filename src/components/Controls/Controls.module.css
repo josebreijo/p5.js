@@ -69,7 +69,7 @@
   grid-template-columns: 1fr max-content;
   gap: 1rem;
   align-items: center;
-  padding-bottom: 0.5rem;
+  padding: 0.2rem 0.5rem;
 }
 
 .control:first-child {
@@ -84,4 +84,15 @@
   display: inline-block;
   font-weight: bold;
   cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.category {
+  margin: 0.5rem 0;
+  border-radius: 3px;
+  border: 2px dotted lightgrey;
+}
+
+.legend {
+  padding: 0 1rem;
 }

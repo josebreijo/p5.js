@@ -11,6 +11,7 @@ const running: CheckboxControlSettings = {
   id: 'running',
   label: 'running',
   description: 'Whether the experiment is running or not',
+  category: 'rendering',
   component: Checkbox,
   setup(c, data) {
     effect(() => {
@@ -26,6 +27,7 @@ const frameRate: SliderControlSettings = {
   id: 'frameRate',
   label: 'framerate',
   description: 'Number of frames to display each second',
+  category: 'rendering',
   component: Slider,
   min: 1,
   max: 60,
@@ -41,6 +43,7 @@ const frameCount: InfoControlSettings = {
   id: 'frameCount',
   label: 'frame',
   description: 'Number of frames displayed since the program started',
+  category: 'rendering',
   component: Info,
   draw(c, data) {
     data.value = c.frameCount.toString();
@@ -53,6 +56,7 @@ const fps: InfoControlSettings = {
   id: 'fps',
   label: 'fps',
   description: 'Actual framerate',
+  category: 'rendering',
   component: Info,
   draw(c, data) {
     data.value = c.frameRate().toFixed(0);

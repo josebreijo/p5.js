@@ -44,10 +44,11 @@ export const experiment: Experiment = (c: p5) => {
 
     c.translate(columnPadding, rowPadding);
 
-    for (let i = 0; i < gridSize; i++) {
-      const { x, y } = position.getPosition(columns, i);
+    for (let index = 0; index < gridSize; index++) {
+      const { x, y } = position.getPosition(columns, index);
 
-      const tileColor = population[i] === ALIVE ? aliveTileColor : deadTileColor;
+      const tileColor = population[index] === ALIVE ? aliveTileColor : deadTileColor;
+
       c.fill(tileColor);
       c.rect(x * tileSize, y * tileSize, tileSize, tileSize);
     }

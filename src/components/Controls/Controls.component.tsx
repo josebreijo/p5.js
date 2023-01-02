@@ -1,6 +1,7 @@
 import { IconAdjustmentsHorizontal } from '@tabler/icons';
 
 import type { Control, ExperimentDefinition } from '../../types';
+import utils from './Controls.utils';
 import styles from './Controls.module.css';
 
 interface ControlsProps {
@@ -18,6 +19,7 @@ export function Controls({
   controls,
 }: ControlsProps) {
   const activeExperiment = experiments.find((experiment) => experiment.id === activeExperimentId);
+  const groupedControls = utils.groupControlsByCategory(controls);
 
   if (!activeExperiment) {
     throw new Error('No active experiment found');
@@ -38,20 +40,27 @@ export function Controls({
       </div>
 
       <div class={styles.controls}>
-        {controls.map((control) => {
-          const ControlComponent = control.settings.component;
-
+        {groupedControls.map(([category, controls]) => {
           return (
-            <label
-              class={styles.control}
-              for={control.settings.id}
-              key={control.settings.id}
-              title={control.settings.description}
-            >
-              <span class={styles.label}>{control.settings.label}</span>
+            <fieldset class={styles.category}>
+              <legend class={styles.legend}>{category} controls</legend>
+              {controls.map((control) => {
+                const ControlComponent = control.settings.component;
 
-              <ControlComponent {...control} />
-            </label>
+                return (
+                  <label
+                    class={styles.control}
+                    for={control.settings.id}
+                    key={control.settings.id}
+                    title={control.settings.description}
+                  >
+                    <span class={styles.label}>{control.settings.label}</span>
+
+                    <ControlComponent {...control} />
+                  </label>
+                );
+              })}
+            </fieldset>
           );
         })}
       </div>
