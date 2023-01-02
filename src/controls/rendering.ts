@@ -47,4 +47,16 @@ const frameCount: InfoControlSettings = {
   },
 };
 
-export default { running, frameRate, frameCount };
+const fps: InfoControlSettings = {
+  type: 'info',
+  defaultValue: '',
+  id: 'fps',
+  label: 'fps',
+  description: 'Actual framerate',
+  component: Info,
+  draw(c, data) {
+    data.value = c.frameRate().toFixed(0);
+  },
+};
+
+export default { running, frameRate, frameCount, fps };

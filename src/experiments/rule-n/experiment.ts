@@ -18,6 +18,7 @@ export const experiment: Experiment = (c: p5) => {
 
   const controls = experiment.registerControls([
     builtinControls.rendering.running,
+    builtinControls.rendering.fps,
     builtinControls.rendering.frameRate,
     builtinControls.rendering.frameCount,
   ]);
