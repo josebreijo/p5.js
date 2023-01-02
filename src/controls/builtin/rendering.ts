@@ -6,6 +6,7 @@ import type {
 import { Checkbox } from '../../components/Checkbox';
 import { Slider } from '../../components/Slider';
 import { Info } from '../../components/Info';
+import { effect } from '@preact/signals';
 
 const running: CheckboxControlSettings = {
   type: 'checkbox',
@@ -16,8 +17,10 @@ const running: CheckboxControlSettings = {
   category: 'rendering',
   component: Checkbox,
   setup(data, c) {
-    if (data.value && !c.isLooping()) c.loop();
-    if (c.isLooping() && !data.value) c.noLoop();
+    effect(() => {
+      if (data.value && !c.isLooping()) c.loop();
+      if (c.isLooping() && !data.value) c.noLoop();
+    });
   },
 };
 
@@ -33,7 +36,9 @@ const frameRate: SliderControlSettings = {
   max: 60,
   step: 1,
   setup(data, c) {
-    c.frameRate(Number(data.value));
+    effect(() => {
+      c.frameRate(Number(data.value));
+    });
   },
 };
 
