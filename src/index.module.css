@@ -2,6 +2,7 @@
   --space: 1rem;
   --bg-color: black;
   --fg-color: white;
+  --accent-color: #60ffca;
 
   font-family: 'IBM Plex Sans Condensed', sans-serif;
   font-size: 16px;
@@ -13,10 +14,17 @@
   color: var(--fg-color);
   background-color: var(--bg-color);
   font-synthesis: none;
+  scrollbar-color: var(--accent-color) Canvas;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
 }
 
 @media (prefers-color-scheme: light) {
@@ -26,10 +34,29 @@
   }
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: inherit;
+:root {
+  accent-color: var(--accent-color);
+}
+
+:focus-visible {
+  outline-color: var(--accent-color);
+}
+
+::selection {
+  background-color: var(--accent-color);
+}
+
+::marker {
+  color: var(--accent-color);
+}
+
+:is(
+    ::-webkit-calendar-picker-indicator,
+    ::-webkit-clear-button,
+    ::-webkit-inner-spin-button,
+    ::-webkit-outer-spin-button
+  ) {
+  color: var(--accent-color);
 }
 
 body {
