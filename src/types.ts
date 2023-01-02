@@ -11,9 +11,11 @@ export type Serializable = string | number | boolean | null;
 
 export type Globals = Record<string, Serializable>;
 
-export type ControlType = 'select' | 'checkbox' | 'slider' | 'info' | 'text';
+export type ControlType = 'select' | 'checkbox' | 'slider' | 'info' | 'text' | 'color';
 
 export type ControlFactory = (controlProps: Control) => JSXInternal.Element;
+
+export type ControlRenderFn = (c: p5, data: Signal) => void;
 
 export interface ControlDefaults {
   id: string;
@@ -22,8 +24,8 @@ export interface ControlDefaults {
   type: ControlType;
   defaultValue: Serializable;
   component: ControlFactory;
-  setup?: (c: p5, data: Signal) => void;
-  draw?: (c: p5, data: Signal) => void;
+  setup?: ControlRenderFn;
+  draw?: ControlRenderFn;
 }
 
 export interface SelectControlSettings extends ControlDefaults {
@@ -56,12 +58,18 @@ export interface TextControlSettings extends ControlDefaults {
   defaultValue: string;
 }
 
+export interface ColorControlSettings extends ControlDefaults {
+  type: 'color';
+  defaultValue: string;
+}
+
 export type ControlSettings =
   | SelectControlSettings
   | CheckboxControlSettings
   | SliderControlSettings
   | InfoControlSettings
-  | TextControlSettings;
+  | TextControlSettings
+  | ColorControlSettings;
 
 export interface Control {
   data: Signal;

@@ -1,24 +1,51 @@
+import { effect } from '@preact/signals';
 import p5 from 'p5';
 
 import type { Experiment } from '../../types';
 import builtinControls from '../../controls';
+import experimentControls from './controls';
 
 // @ts-expect-error `exposeControl` defined in caller
 export const experiment: Experiment = (c: p5) => {
+  const SIZE = 60;
+  const DEAD = 0;
+  const ALIVE = 1;
+
+  let population: number[][] = [];
+  let cellSize = c.windowWidth / SIZE;
+
+  let aliveTileColor = '#ffffff';
+  let deadTileColor = '#000000';
+
   const controls = experiment.registerControls([
     builtinControls.rendering.running,
     builtinControls.rendering.frameRate,
     builtinControls.rendering.frameCount,
   ]);
 
-  const SIZE = 40;
-  const DEAD = 0;
-  const ALIVE = 1;
-  const DEAD_COLOR = 0;
-  const ALIVE_COLOR = 240;
+  const aliveTileColorControl = experimentControls.color({
+    id: 'aliveTileColor',
+    defaultValue: aliveTileColor,
+    label: 'alive tile color',
+    setup(_, data) {
+      effect(() => {
+        aliveTileColor = data.value;
+      });
+    },
+  });
 
-  let population: number[][] = [];
-  let cellSize = c.windowWidth / SIZE;
+  const deadTileColorControl = experimentControls.color({
+    id: 'deadTileColor',
+    defaultValue: deadTileColor,
+    label: 'dead tile color',
+    setup(_, data) {
+      effect(() => {
+        deadTileColor = data.value;
+      });
+    },
+  });
+
+  const customControls = experiment.registerControls([aliveTileColorControl, deadTileColorControl]);
 
   function generatePopulation(size: number, { random = true } = {}) {
     return Array.from({ length: size }, () =>
@@ -29,7 +56,7 @@ export const experiment: Experiment = (c: p5) => {
   function drawGrid() {
     for (let x = 0; x < SIZE; x++) {
       for (let y = 0; y < SIZE; y++) {
-        c.fill(population[x][y] === ALIVE ? ALIVE_COLOR : DEAD_COLOR);
+        c.fill(population[x][y] === ALIVE ? aliveTileColor : deadTileColor);
         c.rect(x * cellSize, y * cellSize, cellSize - 2, cellSize - 2);
       }
     }
@@ -56,6 +83,7 @@ export const experiment: Experiment = (c: p5) => {
 
   c.setup = function setup() {
     controls.setup(c);
+    customControls.setup(c);
 
     population = generatePopulation(SIZE);
 
@@ -67,6 +95,7 @@ export const experiment: Experiment = (c: p5) => {
 
   c.draw = function draw() {
     controls.draw(c);
+    customControls.draw(c);
 
     drawGrid();
 

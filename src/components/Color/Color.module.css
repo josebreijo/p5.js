@@ -1,0 +1,17 @@
+.container {
+  display: grid;
+  grid-template-columns: 1fr min-content;
+  gap: 1rem;
+  width: 100%;
+}
+
+.picker {
+  outline-offset: 1px;
+  justify-self: flex-end;
+  cursor: pointer;
+}
+
+.color {
+  color: white;
+  background-color: var(--color);
+}
