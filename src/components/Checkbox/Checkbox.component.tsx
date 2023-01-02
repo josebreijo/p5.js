@@ -18,6 +18,7 @@ export function Checkbox({ settings, data, onChange }: Control) {
         checked={data.value}
         onChange={onCheckboxChange}
         id={settings.id}
+        title={settings.description}
         class={styles.checkbox}
       />
       <span class={styles.value}>{data.value ? 'ON' : 'OFF'}</span>

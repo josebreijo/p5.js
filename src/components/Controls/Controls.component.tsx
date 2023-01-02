@@ -42,7 +42,12 @@ export function Controls({
           const ControlComponent = control.settings.component;
 
           return (
-            <label class={styles.control} for={control.settings.id} key={control.settings.id}>
+            <label
+              class={styles.control}
+              for={control.settings.id}
+              key={control.settings.id}
+              title={control.settings.description}
+            >
               <span class={styles.label}>{control.settings.label}</span>
 
               <ControlComponent {...control} />

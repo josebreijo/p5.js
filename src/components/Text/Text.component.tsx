@@ -37,6 +37,7 @@ export function Text({ settings, data, onChange }: Control) {
         onChange={onInputChange}
         onKeyDown={onKeyDown}
         id={settings.id}
+        title={settings.description}
         class={styles.input}
       />
     </div>

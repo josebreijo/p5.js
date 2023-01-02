@@ -12,7 +12,13 @@ export function Select({ data, onChange, settings }: Control) {
   }
 
   return (
-    <select value={data.value} onChange={onSelectChange} id={settings.id} class={styles.select}>
+    <select
+      value={data.value}
+      onChange={onSelectChange}
+      id={settings.id}
+      title={settings.description}
+      class={styles.select}
+    >
       {settings.options.map((option) => (
         <option value={option}>{option}</option>
       ))}

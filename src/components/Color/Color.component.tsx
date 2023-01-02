@@ -18,6 +18,7 @@ export function Color({ settings, data, onChange }: Control) {
         value={data.value}
         onChange={onColorChange}
         id={settings.id}
+        title={settings.description}
         class={styles.picker}
       />
       <span class={styles.value}>{data.value}</span>

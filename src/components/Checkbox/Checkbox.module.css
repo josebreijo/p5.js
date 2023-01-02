@@ -8,4 +8,5 @@
 .checkbox {
   outline-offset: 1px;
   justify-self: flex-end;
+  cursor: pointer;
 }

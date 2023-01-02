@@ -21,6 +21,7 @@ export function Slider({ settings, data, onChange }: Control) {
         max={settings.max}
         step={settings.step}
         id={settings.id}
+        title={settings.description}
         class={styles.slider}
       />
       <span class={styles.value}>{data.value}</span>

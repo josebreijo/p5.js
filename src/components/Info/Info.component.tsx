@@ -8,7 +8,9 @@ export function Info({ settings, data }: Control) {
 
   return (
     <div class={styles.container}>
-      <p class={styles.value}>{data.value}</p>
+      <p id={settings.id} title={settings.description} class={styles.value}>
+        {data.value}
+      </p>
     </div>
   );
 }
