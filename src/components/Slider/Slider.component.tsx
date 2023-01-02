@@ -2,9 +2,9 @@ import { Control } from '../../types';
 import styles from './Slider.module.css';
 
 export function Slider({ settings, data, onChange }: Control) {
-  function onSliderChange(event: any) {
-    onChange(event.target.value);
-    event.stopPropagation();
+  function onSliderChange(event: Event) {
+    const target = event.target as HTMLInputElement;
+    onChange(target.value);
   }
 
   if (settings.type !== 'slider') {

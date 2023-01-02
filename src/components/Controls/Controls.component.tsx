@@ -10,6 +10,7 @@ interface ControlsProps {
   controls: Control[];
 }
 
+// TODO: review saving and loading controls state
 export function Controls({
   experiments,
   activeExperimentId,

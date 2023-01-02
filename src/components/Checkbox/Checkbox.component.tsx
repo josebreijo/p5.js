@@ -2,9 +2,9 @@ import { Control } from '../../types';
 import styles from './Checkbox.module.css';
 
 export function Checkbox({ settings, data, onChange }: Control) {
-  function onCheckboxChange(event: any) {
-    onChange(event.target.checked);
-    event.stopPropagation();
+  function onCheckboxChange(event: Event) {
+    const target = event.target as HTMLInputElement;
+    onChange(target.checked);
   }
 
   if (settings.type !== 'checkbox') {
