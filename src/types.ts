@@ -13,7 +13,7 @@ export type Serializable = string | number | boolean | null;
 
 export type Globals = Record<string, Serializable>;
 
-export type ControlType = 'select' | 'checkbox' | 'slider' | 'info' | 'text' | 'color';
+export type ControlType = 'select' | 'checkbox' | 'slider' | 'info' | 'text' | 'color' | 'button';
 
 export type ControlCategory = 'rendering' | 'custom';
 
@@ -68,13 +68,19 @@ export interface ColorControlSettings extends ControlDefaults {
   defaultValue: string;
 }
 
+export interface ButtonControlSettings extends ControlDefaults {
+  type: 'button';
+  defaultValue: string;
+}
+
 export type ControlSettings =
   | SelectControlSettings
   | CheckboxControlSettings
   | SliderControlSettings
   | InfoControlSettings
   | TextControlSettings
-  | ColorControlSettings;
+  | ColorControlSettings
+  | ButtonControlSettings;
 
 export interface Control {
   data: Signal;

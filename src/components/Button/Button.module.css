@@ -1,0 +1,10 @@
+.container {
+  display: flex;
+  width: 100%;
+}
+
+.button {
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+  font-family: 'JetBrains Mono', monospace;
+}

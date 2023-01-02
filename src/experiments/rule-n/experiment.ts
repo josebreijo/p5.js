@@ -21,6 +21,7 @@ export const experiment: Experiment = (c: p5) => {
     builtinControls.rendering.fps,
     builtinControls.rendering.frameRate,
     builtinControls.rendering.frameCount,
+    builtinControls.rendering.redraw,
   ]);
 
   function resetSketch(newRule: number) {

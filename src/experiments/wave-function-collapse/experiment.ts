@@ -23,6 +23,7 @@ export const experiment: Experiment = (c: p5) => {
     builtinControls.rendering.fps,
     builtinControls.rendering.frameRate,
     builtinControls.rendering.frameCount,
+    builtinControls.rendering.redraw,
   ]);
 
   const OPTIONS: Option[] = [BLANK, UP, RIGHT, DOWN, LEFT];

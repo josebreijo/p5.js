@@ -1,6 +1,7 @@
 import { effect } from '@preact/signals';
 
 import type {
+  ButtonControlSettings,
   CheckboxControlSettings,
   InfoControlSettings,
   SliderControlSettings,
@@ -8,6 +9,7 @@ import type {
 import { Checkbox } from '../../components/Checkbox';
 import { Slider } from '../../components/Slider';
 import { Info } from '../../components/Info';
+import { Button } from '../../components/Button';
 
 const running: CheckboxControlSettings = {
   type: 'checkbox',
@@ -69,4 +71,22 @@ const fps: InfoControlSettings = {
   },
 };
 
-export default { running, frameRate, frameCount, fps };
+const redraw: ButtonControlSettings = {
+  type: 'button',
+  defaultValue: 'redraw',
+  id: 'redraw',
+  label: 'click to redraw',
+  description: 'Click to redraw screen',
+  category: 'rendering',
+  component: Button,
+  setup(data, c) {
+    effect(() => {
+      if (data.value) {
+        c.redraw();
+        data.value = false;
+      }
+    });
+  },
+};
+
+export default { running, frameRate, frameCount, fps, redraw };

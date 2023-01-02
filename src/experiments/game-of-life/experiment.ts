@@ -15,7 +15,7 @@ interface Defaults {
 // @ts-expect-error `exposeControl` defined in caller
 export const experiment: Experiment = (c: p5) => {
   const DEFAULTS: Defaults = {
-    TILE_SIZE: 30,
+    TILE_SIZE: 20,
     ALIVE_COLOR: '#2e9949',
     DEAD_COLOR: '#000000',
   };
@@ -49,7 +49,7 @@ export const experiment: Experiment = (c: p5) => {
       const tileColor = population[index] === ALIVE ? aliveTileColor : deadTileColor;
 
       c.fill(tileColor);
-      c.rect(x * tileSize, y * tileSize, tileSize, tileSize);
+      c.rect(x * tileSize, y * tileSize, tileSize - 3, tileSize - 3);
     }
   }
 
@@ -73,6 +73,7 @@ export const experiment: Experiment = (c: p5) => {
     return neighbors;
   }
 
+  // TODO: review offloading to worker (`experiment.compute(...)?`)
   function evolve() {
     let nextGen: Bit[] = [];
 
@@ -105,6 +106,7 @@ export const experiment: Experiment = (c: p5) => {
     builtinControls.rendering.fps,
     builtinControls.rendering.frameRate,
     builtinControls.rendering.frameCount,
+    builtinControls.rendering.redraw,
   ]);
 
   const aliveTileColorControl = factoryControls.color({

@@ -90,7 +90,7 @@
 .category {
   margin: 0.5rem 0;
   border-radius: 3px;
-  border: 2px dotted lightgrey;
+  border: 1px dashed lightgrey;
 }
 
 .legend {

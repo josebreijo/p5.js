@@ -12,6 +12,7 @@ interface ControlsProps {
 }
 
 // TODO: review saving and loading controls state
+// TODO: implement defaults and reset with controls state buttons
 export function Controls({
   experiments,
   activeExperimentId,
