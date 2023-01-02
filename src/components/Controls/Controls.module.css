@@ -3,7 +3,7 @@
   position: absolute;
   top: var(--space);
   right: var(--space);
-  opacity: 0.25;
+  opacity: 0.2;
   color: white;
   border: 1px solid transparent;
   background-color: black;

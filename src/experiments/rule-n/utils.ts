@@ -1,7 +1,7 @@
-import { Bit, RuleSet } from './types';
+import { Bit } from '../../types';
 
 function generateRuleSet(rule: number, { BYTE_LENGTH: BITS = 8 } = {}) {
-  const ruleSet: RuleSet = {};
+  const ruleSet: Record<string, Bit> = {};
 
   rule
     .toString(2)

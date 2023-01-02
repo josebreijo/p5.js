@@ -2,6 +2,8 @@ import type { Signal } from '@preact/signals';
 import { JSXInternal } from 'preact/src/jsx';
 import p5 from 'p5';
 
+export type Bit = 0 | 1;
+
 export interface Position {
   x: number;
   y: number;

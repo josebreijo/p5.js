@@ -14,4 +14,4 @@ function color(settings: ColorControlProps): ColorControlSettings {
   };
 }
 
-export default { color };
+export { color };

@@ -1,21 +1,26 @@
 import { effect } from '@preact/signals';
 import p5 from 'p5';
 
-import type { Experiment } from '../../types';
+import type { Bit, Experiment } from '../../types';
+import position from '../../utils/position';
 import builtinControls from '../../controls';
-import experimentControls from './controls';
+import factoryControls from '../../controls/factory';
+import { EXTENDED_MOVEMENT_DELTA } from '../../constants';
 
 // @ts-expect-error `exposeControl` defined in caller
 export const experiment: Experiment = (c: p5) => {
-  const SIZE = 60;
   const DEAD = 0;
   const ALIVE = 1;
+  const TILE_SIZE = 10;
 
-  let population: number[][] = [];
-  let cellSize = c.windowWidth / SIZE;
-
-  let aliveTileColor = '#ffffff';
+  let aliveTileColor = '#2e9949';
   let deadTileColor = '#000000';
+
+  let population: Bit[] = [];
+
+  let columns = c.floor(c.windowWidth / TILE_SIZE);
+  let rows = c.floor(c.windowHeight / TILE_SIZE);
+  let gridSize = columns * rows;
 
   const controls = experiment.registerControls([
     builtinControls.rendering.running,
@@ -23,18 +28,16 @@ export const experiment: Experiment = (c: p5) => {
     builtinControls.rendering.frameCount,
   ]);
 
-  const aliveTileColorControl = experimentControls.color({
+  const aliveTileColorControl = factoryControls.color({
     id: 'aliveTileColor',
     defaultValue: aliveTileColor,
     label: 'alive tile color',
     setup(_, data) {
-      effect(() => {
-        aliveTileColor = data.value;
-      });
+      effect(() => (aliveTileColor = data.value));
     },
   });
 
-  const deadTileColorControl = experimentControls.color({
+  const deadTileColorControl = factoryControls.color({
     id: 'deadTileColor',
     defaultValue: deadTileColor,
     label: 'dead tile color',
@@ -47,73 +50,89 @@ export const experiment: Experiment = (c: p5) => {
 
   const customControls = experiment.registerControls([aliveTileColorControl, deadTileColorControl]);
 
-  function generatePopulation(size: number, { random = true } = {}) {
-    return Array.from({ length: size }, () =>
-      Array.from({ length: size }, () => (random ? c.floor(c.random(2)) : DEAD)),
-    );
+  function generatePopulation(): Bit[] {
+    return Array.from({ length: gridSize }, () => c.random([DEAD, ALIVE]));
   }
 
   function drawGrid() {
-    for (let x = 0; x < SIZE; x++) {
-      for (let y = 0; y < SIZE; y++) {
-        c.fill(population[x][y] === ALIVE ? aliveTileColor : deadTileColor);
-        c.rect(x * cellSize, y * cellSize, cellSize - 2, cellSize - 2);
-      }
+    let columnPadding = (c.windowWidth - columns * TILE_SIZE) / 2;
+    let rowPadding = (c.windowHeight - rows * TILE_SIZE) / 2;
+
+    c.translate(columnPadding, rowPadding);
+
+    for (let i = 0; i < gridSize; i++) {
+      const { x, y } = position.getPosition(columns, i);
+
+      const tileColor = population[i] === ALIVE ? aliveTileColor : deadTileColor;
+      c.fill(tileColor);
+      c.rect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
     }
   }
 
-  function getNen(x: number, y: number) {
-    let nen = 0;
+  function getNeighborCount(index: number) {
+    let neighbors = 0;
+    const tilePosition = position.getPosition(columns, index);
 
-    for (let deltaX = -1; deltaX <= 1; deltaX++) {
-      for (let deltaY = -1; deltaY <= 1; deltaY++) {
-        const nX = x + deltaX;
-        const nY = y + deltaY;
+    for (let delta of EXTENDED_MOVEMENT_DELTA) {
+      const deltaX = tilePosition.x + delta.x;
+      const deltaY = tilePosition.y + delta.y;
 
-        if ((deltaX === 0 && deltaY === 0) || nX < 0 || nX >= SIZE || nY < 0 || nY >= SIZE) {
-          continue;
-        }
+      if (deltaX < 0 || deltaX >= columns || deltaY < 0 || deltaY >= rows) continue;
 
-        nen += population[nX][nY];
+      const targetIndex = position.getIndex(columns, { x: deltaX, y: deltaY });
+
+      if (targetIndex < 0 || targetIndex >= gridSize) continue;
+
+      neighbors += population[targetIndex];
+    }
+
+    return neighbors;
+  }
+
+  function evolve() {
+    let nextGen: Bit[] = [];
+
+    for (let index = 0; index < gridSize; index++) {
+      const neighbors = getNeighborCount(index);
+
+      if (population[index] === DEAD) {
+        nextGen[index] = neighbors === 3 ? ALIVE : DEAD;
+      } else {
+        nextGen[index] = neighbors < 2 || neighbors > 3 ? DEAD : ALIVE;
       }
     }
 
-    return nen;
+    return nextGen;
   }
 
   c.setup = function setup() {
+    c.createCanvas(c.windowWidth, c.windowHeight);
+    c.colorMode(c.HSB);
+
     controls.setup(c);
     customControls.setup(c);
 
-    population = generatePopulation(SIZE);
-
-    c.createCanvas(c.windowWidth, c.windowHeight);
-    c.background(0);
-    c.fill(255);
-    c.colorMode(c.HSB);
+    population = generatePopulation();
   };
 
   c.draw = function draw() {
+    c.fill(aliveTileColor);
+    c.background(deadTileColor);
+
     controls.draw(c);
     customControls.draw(c);
 
     drawGrid();
+    population = evolve();
+  };
 
-    cellSize = c.windowWidth / SIZE;
-    let nextGen: number[][] = generatePopulation(SIZE, { random: false });
+  c.windowResized = function windowResized() {
+    columns = c.floor(c.windowWidth / TILE_SIZE);
+    rows = c.floor(c.windowHeight / TILE_SIZE);
+    gridSize = columns * rows;
 
-    for (let x = 0; x < SIZE; x++) {
-      for (let y = 0; y < SIZE; y++) {
-        const nen = getNen(x, y);
+    population = generatePopulation();
 
-        if (population[x][y] === DEAD) {
-          nextGen[x][y] = nen === 3 ? ALIVE : DEAD;
-        } else {
-          nextGen[x][y] = nen < 2 || nen > 3 ? DEAD : ALIVE;
-        }
-      }
-    }
-
-    population = nextGen;
+    c.resizeCanvas(c.windowWidth, c.windowHeight);
   };
 };

@@ -1,7 +1,6 @@
 import p5 from 'p5';
 
-import type { Experiment } from '../../types';
-import type { Bit } from './types';
+import type { Bit, Experiment } from '../../types';
 import builtinControls from '../../controls';
 import experimentControls from './controls';
 import utils from './utils';
