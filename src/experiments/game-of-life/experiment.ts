@@ -157,6 +157,7 @@ export const experiment: Experiment = (c: p5) => {
     controls.draw(c);
     customControls.draw(c);
 
+    c.noStroke();
     c.fill(aliveTileColor);
     c.background(deadTileColor);
 
