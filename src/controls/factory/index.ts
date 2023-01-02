@@ -1,6 +1,6 @@
 import { color } from './color';
-import { text } from './text';
-import { slider } from './slider';
 import { select } from './select';
+import { slider } from './slider';
+import { text } from './text';
 
-export default { color, text, slider, select };
+export default { color, select, slider, text };

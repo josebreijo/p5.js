@@ -1,3 +1,5 @@
+import { effect } from '@preact/signals';
+
 import type {
   CheckboxControlSettings,
   InfoControlSettings,
@@ -6,7 +8,6 @@ import type {
 import { Checkbox } from '../../components/Checkbox';
 import { Slider } from '../../components/Slider';
 import { Info } from '../../components/Info';
-import { effect } from '@preact/signals';
 
 const running: CheckboxControlSettings = {
   type: 'checkbox',

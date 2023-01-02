@@ -1,10 +1,10 @@
 import p5 from 'p5';
 
 import type { Bit, Experiment } from '../../types';
-import position from '../../utils/position';
+import { EXTENDED_MOVEMENT_DELTA } from '../../constants';
 import builtinControls from '../../controls/builtin';
 import factoryControls from '../../controls/factory';
-import { EXTENDED_MOVEMENT_DELTA } from '../../constants';
+import position from '../../utils/position';
 
 interface Defaults {
   TILE_SIZE: number;
@@ -144,21 +144,21 @@ export const experiment: Experiment = (c: p5) => {
   ]);
 
   c.setup = function setup() {
-    c.createCanvas(c.windowWidth, c.windowHeight);
-    c.colorMode(c.HSB);
-
     controls.setup(c);
     customControls.setup(c);
+
+    c.createCanvas(c.windowWidth, c.windowHeight);
+    c.colorMode(c.HSB);
 
     population = generatePopulation();
   };
 
   c.draw = function draw() {
-    c.fill(aliveTileColor);
-    c.background(deadTileColor);
-
     controls.draw(c);
     customControls.draw(c);
+
+    c.fill(aliveTileColor);
+    c.background(deadTileColor);
 
     drawGrid();
     population = evolve();

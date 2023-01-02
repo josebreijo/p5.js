@@ -48,16 +48,16 @@ export const experiment: Experiment = (c: p5) => {
   const customControls = experiment.registerControls([ruleNumberControl]);
 
   c.setup = function setup() {
-    controls.setup(c);
-    customControls.setup(c);
-
-    cells[c.floor(gridLength / 2)] = 1;
-
     c.createCanvas(c.windowWidth, c.windowHeight);
     c.colorMode(c.HSB);
     c.background(0);
     c.fill(255);
     c.strokeWeight(1);
+
+    controls.setup(c);
+    customControls.setup(c);
+
+    cells[c.floor(gridLength / 2)] = 1;
   };
 
   c.draw = function draw() {
