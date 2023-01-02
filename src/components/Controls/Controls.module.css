@@ -11,8 +11,6 @@
   display: flex;
   flex-direction: column;
   padding: 1rem;
-  font-family: 'Iosevka', monospace;
-  user-select: none;
 }
 
 .container:hover,
@@ -41,8 +39,12 @@
 .experiments {
   width: 100%;
   padding: 0.2rem;
-  font-family: inherit;
+  font-family: 'JetBrains Mono', monospace;
   cursor: pointer;
+}
+
+.experiments option {
+  font-family: 'JetBrains Mono', monospace;
 }
 
 .controls {

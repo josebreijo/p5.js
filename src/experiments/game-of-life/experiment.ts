@@ -134,7 +134,7 @@ export const experiment: Experiment = (c: p5) => {
     defaultValue: tileSize,
     label: 'tile size',
     min: 10,
-    max: c.floor(c.windowWidth / 10),
+    max: c.floor(c.windowWidth / 12),
     step: 1,
     setup(_, data) {
       effect(() => {
