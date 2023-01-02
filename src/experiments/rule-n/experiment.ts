@@ -1,8 +1,9 @@
+import { effect } from '@preact/signals';
 import p5 from 'p5';
 
 import type { Bit, Experiment } from '../../types';
 import builtinControls from '../../controls';
-import experimentControls from './controls';
+import factoryControls from '../../controls/factory';
 import utils from './utils';
 
 // @ts-expect-error `exposeControl` defined in caller
@@ -33,7 +34,19 @@ export const experiment: Experiment = (c: p5) => {
     c.clear(0, 0, 0, 0);
   }
 
-  const customControls = experiment.registerControls([experimentControls.ruleNumber(resetSketch)]);
+  const ruleNumberControl = factoryControls.select({
+    defaultValue: '30',
+    options: [28, 30, 50, 54, 60, 90, 94, 102, 110, 150, 158, 188, 190, 220].map((rule) =>
+      rule.toString(),
+    ),
+    id: 'ruleNumber',
+    label: 'ruleset',
+    setup(_, data) {
+      effect(() => resetSketch(Number(data.value)));
+    },
+  });
+
+  const customControls = experiment.registerControls([ruleNumberControl]);
 
   c.setup = function setup() {
     controls.setup(c);
