@@ -1,9 +1,8 @@
-import { effect } from '@preact/signals';
 import p5 from 'p5';
 
 import type { Bit, Experiment } from '../../types';
 import position from '../../utils/position';
-import builtinControls from '../../controls';
+import builtinControls from '../../controls/builtin';
 import factoryControls from '../../controls/factory';
 import { EXTENDED_MOVEMENT_DELTA } from '../../constants';
 
@@ -112,10 +111,8 @@ export const experiment: Experiment = (c: p5) => {
     id: 'aliveTileColor',
     defaultValue: aliveTileColor,
     label: 'alive tile color',
-    setup(_, data) {
-      effect(() => {
-        aliveTileColor = data.value;
-      });
+    setup(data) {
+      aliveTileColor = data.value;
     },
   });
 
@@ -123,10 +120,8 @@ export const experiment: Experiment = (c: p5) => {
     id: 'deadTileColor',
     defaultValue: deadTileColor,
     label: 'dead tile color',
-    setup(_, data) {
-      effect(() => {
-        deadTileColor = data.value;
-      });
+    setup(data) {
+      deadTileColor = data.value;
     },
   });
 
@@ -137,10 +132,8 @@ export const experiment: Experiment = (c: p5) => {
     min: 10,
     max: c.floor(c.windowWidth / 12),
     step: 1,
-    setup(_, data) {
-      effect(() => {
-        reset({ TILE_SIZE: data.value });
-      });
+    setup(data) {
+      reset({ TILE_SIZE: data.value });
     },
   });
 

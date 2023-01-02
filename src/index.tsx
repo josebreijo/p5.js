@@ -76,8 +76,8 @@ function App() {
           controls.signals[settings.id] = data;
           // Collect effects for each rendering phase since they either listen or
           // mutates the signal, which produces changes on the drawing context `c`,
-          settings.setup && controlsSetupQueue.push((c: p5) => settings.setup!(c, data));
-          settings.draw && controlsDrawQueue.push((c: p5) => settings.draw!(c, data));
+          settings.setup && controlsSetupQueue.push((c: p5) => settings.setup!(data, c));
+          settings.draw && controlsDrawQueue.push((c: p5) => settings.draw!(data, c));
 
           // Binds the signal value to the control UI via `onChange` prop.
           const onChange = (value: any) => (data.value = value);

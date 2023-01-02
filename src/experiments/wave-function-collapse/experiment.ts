@@ -2,7 +2,7 @@ import p5 from 'p5';
 
 import type { Experiment } from '../../types';
 import type { Option, Tile } from './types';
-import builtinControls from '../../controls';
+import builtinControls from '../../controls/builtin';
 import * as utils from './utils';
 import {
   BLANK,

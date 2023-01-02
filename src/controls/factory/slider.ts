@@ -1,5 +1,6 @@
 import type { SliderControlSettings } from '../../types';
 import { Slider } from '../../components/Slider';
+import utils from '../utils';
 
 type SliderControlProps = Pick<
   SliderControlSettings,
@@ -11,6 +12,7 @@ function slider(settings: SliderControlProps): SliderControlSettings {
     ...settings,
     type: 'slider',
     component: Slider,
+    setup: utils.wrapSetupEffects(settings.setup),
   };
 }
 

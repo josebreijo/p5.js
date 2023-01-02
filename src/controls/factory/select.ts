@@ -1,5 +1,6 @@
 import type { SelectControlSettings } from '../../types';
 import { Select } from '../../components/Select';
+import utils from '../utils';
 
 type SelectControlProps = Pick<
   SelectControlSettings,
@@ -11,6 +12,7 @@ function select(settings: SelectControlProps): SelectControlSettings {
     ...settings,
     type: 'select',
     component: Select,
+    setup: utils.wrapSetupEffects(settings.setup),
   };
 }
 

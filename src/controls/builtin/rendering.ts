@@ -1,9 +1,11 @@
-import { effect } from '@preact/signals';
-
-import type { CheckboxControlSettings, InfoControlSettings, SliderControlSettings } from '../types';
-import { Checkbox } from '../components/Checkbox';
-import { Slider } from '../components/Slider';
-import { Info } from '../components/Info';
+import type {
+  CheckboxControlSettings,
+  InfoControlSettings,
+  SliderControlSettings,
+} from '../../types';
+import { Checkbox } from '../../components/Checkbox';
+import { Slider } from '../../components/Slider';
+import { Info } from '../../components/Info';
 
 const running: CheckboxControlSettings = {
   type: 'checkbox',
@@ -13,11 +15,9 @@ const running: CheckboxControlSettings = {
   description: 'Whether the experiment is running or not',
   category: 'rendering',
   component: Checkbox,
-  setup(c, data) {
-    effect(() => {
-      if (data.value && !c.isLooping()) c.loop();
-      if (c.isLooping() && !data.value) c.noLoop();
-    });
+  setup(data, c) {
+    if (data.value && !c.isLooping()) c.loop();
+    if (c.isLooping() && !data.value) c.noLoop();
   },
 };
 
@@ -32,8 +32,8 @@ const frameRate: SliderControlSettings = {
   min: 1,
   max: 60,
   step: 1,
-  setup(c, data) {
-    effect(() => c.frameRate(Number(data.value)));
+  setup(data, c) {
+    c.frameRate(Number(data.value));
   },
 };
 
@@ -45,7 +45,7 @@ const frameCount: InfoControlSettings = {
   description: 'Number of frames displayed since the program started',
   category: 'rendering',
   component: Info,
-  draw(c, data) {
+  draw(data, c) {
     data.value = c.frameCount.toString();
   },
 };
@@ -58,7 +58,7 @@ const fps: InfoControlSettings = {
   description: 'Actual framerate',
   category: 'rendering',
   component: Info,
-  draw(c, data) {
+  draw(data, c) {
     data.value = c.frameRate().toFixed(0);
   },
 };

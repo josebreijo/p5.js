@@ -1,8 +1,7 @@
-import { effect } from '@preact/signals';
 import p5 from 'p5';
 
 import type { Bit, Experiment } from '../../types';
-import builtinControls from '../../controls';
+import builtinControls from '../../controls/builtin';
 import factoryControls from '../../controls/factory';
 import utils from './utils';
 
@@ -41,8 +40,8 @@ export const experiment: Experiment = (c: p5) => {
     ),
     id: 'ruleNumber',
     label: 'ruleset',
-    setup(_, data) {
-      effect(() => resetSketch(Number(data.value)));
+    setup(data) {
+      resetSketch(Number(data.value));
     },
   });
 

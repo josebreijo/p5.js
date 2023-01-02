@@ -1,5 +1,6 @@
 import type { ColorControlSettings } from '../../types';
 import { Color } from '../../components/Color';
+import utils from '../utils';
 
 type ColorControlProps = Pick<
   ColorControlSettings,
@@ -11,6 +12,7 @@ function color(settings: ColorControlProps): ColorControlSettings {
     ...settings,
     type: 'color',
     component: Color,
+    setup: utils.wrapSetupEffects(settings.setup),
   };
 }
 

@@ -19,7 +19,7 @@ export type ControlCategory = 'rendering' | 'custom';
 
 export type ControlFactory = (controlProps: Control) => JSXInternal.Element;
 
-export type ControlRenderFn = (c: p5, data: Signal) => void;
+export type ControlRenderFn = (data: Signal, c: p5) => void;
 
 export interface ControlDefaults {
   id: string;

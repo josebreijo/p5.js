@@ -1,5 +1,6 @@
 import type { TextControlSettings } from '../../types';
 import { Text } from '../../components/Text';
+import utils from '../utils';
 
 type TextControlProps = Pick<
   TextControlSettings,
@@ -11,6 +12,7 @@ function text(settings: TextControlProps): TextControlSettings {
     ...settings,
     type: 'text',
     component: Text,
+    setup: utils.wrapSetupEffects(settings.setup),
   };
 }
 
