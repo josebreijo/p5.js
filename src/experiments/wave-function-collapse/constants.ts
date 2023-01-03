@@ -1,7 +1,5 @@
 import { Connections as Rules, TileUI } from './types';
 
-export const DIMENSION = 25;
-
 export const BLANK = 'BLANK';
 export const UP = 'UP';
 export const RIGHT = 'RIGHT';

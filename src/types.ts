@@ -23,11 +23,11 @@ export type ControlRenderFn = (data: Signal, c: p5) => void;
 
 export interface ControlDefaults {
   id: string;
-  label: string;
   description?: string;
   type: ControlType;
   defaultValue: Serializable;
   component: ControlFactory;
+  label?: string;
   setup?: ControlRenderFn;
   draw?: ControlRenderFn;
   category?: ControlCategory;

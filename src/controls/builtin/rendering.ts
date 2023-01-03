@@ -75,7 +75,7 @@ const redraw: ButtonControlSettings = {
   type: 'button',
   defaultValue: 'redraw',
   id: 'redraw',
-  label: 'click to redraw',
+  label: 'draw frame',
   description: 'Click to redraw screen',
   category: 'rendering',
   component: Button,

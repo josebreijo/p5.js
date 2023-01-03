@@ -12,29 +12,40 @@ interface Defaults {
   ALIVE_COLOR: string;
 }
 
+const DEFAULTS: Defaults = {
+  TILE_SIZE: 20,
+  ALIVE_COLOR: '#2e9949',
+  DEAD_COLOR: '#000000',
+};
+
 // @ts-expect-error `exposeControl` defined in caller
 export const experiment: Experiment = (c: p5) => {
-  const DEFAULTS: Defaults = {
-    TILE_SIZE: 20,
-    ALIVE_COLOR: '#2e9949',
-    DEAD_COLOR: '#000000',
-  };
-
   const DEAD = 0;
   const ALIVE = 1;
 
+  let tileSize = DEFAULTS.TILE_SIZE;
   let aliveTileColor = DEFAULTS.ALIVE_COLOR;
   let deadTileColor = DEFAULTS.DEAD_COLOR;
-  let tileSize = DEFAULTS.TILE_SIZE;
-
   let columns = c.floor(c.windowWidth / tileSize);
   let rows = c.floor(c.windowHeight / tileSize);
   let gridSize = columns * rows;
-
   let population: Bit[] = [];
 
   function generatePopulation(): Bit[] {
     return Array.from({ length: gridSize }, () => c.random([DEAD, ALIVE]));
+  }
+
+  function restart(userDefaults: Partial<Defaults> = DEFAULTS) {
+    tileSize = userDefaults.TILE_SIZE || DEFAULTS.TILE_SIZE;
+    aliveTileColor = userDefaults.ALIVE_COLOR || DEFAULTS.ALIVE_COLOR;
+    deadTileColor = userDefaults.DEAD_COLOR || DEFAULTS.DEAD_COLOR;
+
+    columns = c.floor(c.windowWidth / tileSize);
+    rows = c.floor(c.windowHeight / tileSize);
+    gridSize = columns * rows;
+    population = generatePopulation();
+
+    c.redraw();
   }
 
   function drawGrid() {
@@ -90,17 +101,6 @@ export const experiment: Experiment = (c: p5) => {
     return nextGen;
   }
 
-  function reset(userDefaults: Partial<Defaults> = DEFAULTS) {
-    tileSize = userDefaults.TILE_SIZE || DEFAULTS.TILE_SIZE;
-    aliveTileColor = userDefaults.ALIVE_COLOR || DEFAULTS.ALIVE_COLOR;
-    deadTileColor = userDefaults.DEAD_COLOR || DEFAULTS.DEAD_COLOR;
-
-    columns = c.floor(c.windowWidth / tileSize);
-    rows = c.floor(c.windowHeight / tileSize);
-    gridSize = columns * rows;
-    population = generatePopulation();
-  }
-
   const controls = experiment.registerControls([
     builtinControls.rendering.running,
     builtinControls.rendering.fps,
@@ -135,19 +135,58 @@ export const experiment: Experiment = (c: p5) => {
     max: c.floor(c.windowWidth / 12),
     step: 1,
     setup(data) {
-      reset({ TILE_SIZE: data.value });
+      restart({ TILE_SIZE: data.value, DEAD_COLOR: deadTileColor, ALIVE_COLOR: aliveTileColor });
     },
   });
 
-  const customControls = experiment.registerControls([
+  const tileControls = experiment.registerControls([
     aliveTileColorControl,
     deadTileColorControl,
     tileSizeControl,
   ]);
 
+  const restartControl = factoryControls.button({
+    id: 'restartButton',
+    defaultValue: 'restart',
+    label: 'restart experiment',
+    category: 'rendering',
+    setup(data) {
+      if (data.value) {
+        restart();
+
+        tileControls.signals.aliveTileColor.value = DEFAULTS.ALIVE_COLOR;
+        tileControls.signals.deadTileColor.value = DEFAULTS.DEAD_COLOR;
+        tileControls.signals.tileSize.value = DEFAULTS.TILE_SIZE;
+
+        data.value = false;
+      }
+    },
+  });
+
+  const reloadWithChangesControl = factoryControls.button({
+    id: 'reloadWithChangeButton',
+    defaultValue: 'reload',
+    label: 'reload with changes',
+    category: 'custom',
+    setup(data) {
+      if (data.value) {
+        restart({
+          ALIVE_COLOR: tileControls.signals.aliveTileColor.value,
+          DEAD_COLOR: tileControls.signals.deadTileColor.value,
+          TILE_SIZE: tileControls.signals.tileSize.value,
+        });
+
+        data.value = false;
+      }
+    },
+  });
+
+  const playbackControls = experiment.registerControls([restartControl, reloadWithChangesControl]);
+
   c.setup = function setup() {
     controls.setup(c);
-    customControls.setup(c);
+    tileControls.setup(c);
+    playbackControls.setup(c);
 
     c.createCanvas(c.windowWidth, c.windowHeight);
     c.colorMode(c.HSB);
@@ -157,7 +196,8 @@ export const experiment: Experiment = (c: p5) => {
 
   c.draw = function draw() {
     controls.draw(c);
-    customControls.draw(c);
+    tileControls.draw(c);
+    playbackControls.draw(c);
 
     c.noStroke();
     c.fill(aliveTileColor);
@@ -170,10 +210,10 @@ export const experiment: Experiment = (c: p5) => {
   c.windowResized = function windowResized() {
     c.resizeCanvas(c.windowWidth, c.windowHeight);
 
-    const { aliveTileColor, deadTileColor, tileSize } = customControls.signals;
+    const { aliveTileColor, deadTileColor, tileSize } = tileControls.signals;
 
     // TODO: review and generalize `reset` approach
-    reset({
+    restart({
       TILE_SIZE: tileSize.value,
       ALIVE_COLOR: aliveTileColor.value,
       DEAD_COLOR: deadTileColor.value,

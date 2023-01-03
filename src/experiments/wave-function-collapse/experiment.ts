@@ -3,18 +3,18 @@ import p5 from 'p5';
 import type { Experiment } from '../../types';
 import type { Option, Tile } from './types';
 import builtinControls from '../../controls/builtin';
-import * as utils from './utils';
-import {
-  BLANK,
-  RULES,
-  DOWN,
-  LEFT,
-  MOVEMENT_DELTA,
-  RIGHT,
-  TILES_UI,
-  UP,
-  DIMENSION,
-} from './constants';
+import position from '../../utils/position';
+import utils from './utils';
+import { BLANK, RULES, DOWN, LEFT, MOVEMENT_DELTA, RIGHT, TILES_UI, UP } from './constants';
+import factoryControls from '../../controls/factory';
+
+interface Defaults {
+  TILES_PER_ROW: number;
+}
+
+const DEFAULTS: Defaults = {
+  TILES_PER_ROW: 20,
+};
 
 // @ts-expect-error `exposeControl` defined in caller
 export const experiment: Experiment = (c: p5) => {
@@ -28,18 +28,42 @@ export const experiment: Experiment = (c: p5) => {
 
   const OPTIONS: Option[] = [BLANK, UP, RIGHT, DOWN, LEFT];
 
-  let grid: Tile[] = Array.from({ length: DIMENSION * DIMENSION }).map((_, index) => ({
+  let tilesPerRow = DEFAULTS.TILES_PER_ROW;
+  let minimumTilesPerRow = 10;
+
+  let grid: Tile[] = Array.from({ length: tilesPerRow * tilesPerRow }).map((_, index) => ({
     index,
     options: OPTIONS,
     seed: false,
     collapsed: false,
-    position: utils.getTilePosition(index),
+    position: position.getPosition(tilesPerRow, index),
   }));
 
-  const seedIndex = c.floor(c.random(DIMENSION * DIMENSION));
+  let seedIndex = c.floor(c.random(tilesPerRow * tilesPerRow));
 
   grid[seedIndex].seed = true;
   grid[seedIndex].options = utils.randomizeOptions(OPTIONS);
+
+  function restart(userDefaults: Partial<Defaults> = DEFAULTS) {
+    tilesPerRow = userDefaults.TILES_PER_ROW || DEFAULTS.TILES_PER_ROW;
+
+    grid = Array.from({ length: tilesPerRow * tilesPerRow }).map((_, index) => ({
+      index,
+      options: OPTIONS,
+      seed: false,
+      collapsed: false,
+      position: position.getPosition(tilesPerRow, index),
+    }));
+
+    seedIndex = c.floor(c.random(tilesPerRow * tilesPerRow));
+
+    grid[seedIndex].seed = true;
+    grid[seedIndex].options = utils.randomizeOptions(OPTIONS);
+
+    controls.signals.running.value = true;
+    c.clear(0, 0, 0, 0);
+    c.redraw();
+  }
 
   function collapseTile(grid: Tile[]) {
     const sortedByLessEntropy = [...grid]
@@ -87,11 +111,11 @@ export const experiment: Experiment = (c: p5) => {
         const targetY = tile.position.y + moveDelta.y;
 
         const targetOffBounds =
-          targetX < 0 || targetX >= DIMENSION || targetY < 0 || targetY >= DIMENSION;
+          targetX < 0 || targetX >= tilesPerRow || targetY < 0 || targetY >= tilesPerRow;
 
         if (targetOffBounds) continue;
 
-        const neighborTileIndex = targetX + targetY * DIMENSION;
+        const neighborTileIndex = targetX + targetY * tilesPerRow;
         const neighborTile = grid[neighborTileIndex];
 
         // Non-collapsed neighbor tiles are ignored as they don't affect the entropy of the current tile
@@ -125,11 +149,11 @@ export const experiment: Experiment = (c: p5) => {
   function drawTile(tile: Tile, x: number, y: number, tileWidth: number, tileHeight: number) {
     const tileX = tile.position.x * tileWidth;
     const tileY = tile.position.y * tileHeight;
-
     const tileHue = c.map(tileX, 0, c.windowWidth, 0, 360);
     const tileLightness = c.map(tileY, 0, c.windowHeight, 40, 100);
     const tileColor = c.color(tileHue, 100, tileLightness);
-    const tileStrokeWeight = c.map(tileX, 0, c.windowWidth, 2, 6);
+    const maxTilesPerRow = c.floor(c.windowWidth / minimumTilesPerRow);
+    const tileStrokeWeight = c.map(tilesPerRow, 5, maxTilesPerRow, 6, 1);
 
     c.push();
     c.noFill();
@@ -158,8 +182,8 @@ export const experiment: Experiment = (c: p5) => {
   }
 
   function drawGrid() {
-    const tileWidth = c.windowWidth / DIMENSION;
-    const tileHeight = c.windowHeight / DIMENSION;
+    const tileWidth = c.windowWidth / tilesPerRow;
+    const tileHeight = c.windowHeight / tilesPerRow;
 
     for (let tileIndex = 0; tileIndex < grid.length; tileIndex++) {
       const tile = grid[tileIndex];
@@ -172,8 +196,23 @@ export const experiment: Experiment = (c: p5) => {
     }
   }
 
+  const tilesPerRowControl = factoryControls.slider({
+    id: 'tilesPerRow',
+    defaultValue: tilesPerRow,
+    label: 'tiles per row',
+    min: 5,
+    max: c.floor(c.windowWidth / 10),
+    step: 1,
+    setup(data) {
+      restart({ TILES_PER_ROW: data.value });
+    },
+  });
+
+  const customControls = experiment.registerControls([tilesPerRowControl]);
+
   c.setup = function setup() {
     controls.setup(c);
+    customControls.setup(c);
 
     c.createCanvas(c.windowWidth, c.windowHeight);
     c.colorMode(c.HSB);
@@ -181,12 +220,13 @@ export const experiment: Experiment = (c: p5) => {
 
   c.draw = function draw() {
     controls.draw(c);
+    customControls.draw(c);
 
     const collapsedTile = collapseTile(grid);
 
     if (!collapsedTile) {
-      c.noLoop();
       controls.signals.running.value = false;
+
       return;
     }
 
@@ -196,6 +236,7 @@ export const experiment: Experiment = (c: p5) => {
   };
 
   c.windowResized = function () {
+    restart();
     c.resizeCanvas(c.windowWidth, c.windowHeight);
   };
 };
