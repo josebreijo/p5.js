@@ -29,7 +29,7 @@ export const experiment: Experiment = (c: p5) => {
   const OPTIONS: Option[] = [BLANK, UP, RIGHT, DOWN, LEFT];
 
   let tilesPerRow = DEFAULTS.TILES_PER_ROW;
-  let minimumTilesPerRow = 10;
+  let minimumTilesPerRow = 20;
 
   let grid: Tile[] = Array.from({ length: tilesPerRow * tilesPerRow }).map((_, index) => ({
     index,
@@ -136,7 +136,7 @@ export const experiment: Experiment = (c: p5) => {
         if (remainingTileOptions.length === 0) {
           const errorMessage = 'Reached incorrect state, no backtracking implemented yet!';
           window.alert(errorMessage);
-          window.location.reload();
+          restart();
         }
 
         tile.options = remainingTileOptions;
@@ -208,11 +208,41 @@ export const experiment: Experiment = (c: p5) => {
     },
   });
 
-  const customControls = experiment.registerControls([tilesPerRowControl]);
+  const tilesControl = experiment.registerControls([tilesPerRowControl]);
+
+  const restartControl = factoryControls.button({
+    id: 'restartButton',
+    defaultValue: 'restart',
+    label: 'restart experiment',
+    category: 'rendering',
+    setup(data) {
+      if (data.value) {
+        restart();
+        tilesControl.signals.tilesPerRow.value = DEFAULTS.TILES_PER_ROW;
+        data.value = false;
+      }
+    },
+  });
+
+  const reloadWithChangesControl = factoryControls.button({
+    id: 'reloadWithChangeButton',
+    defaultValue: 'reload',
+    label: 'reload with changes',
+    category: 'custom',
+    setup(data) {
+      if (data.value) {
+        restart({ TILES_PER_ROW: tilesControl.signals.tilesPerRow.value });
+        data.value = false;
+      }
+    },
+  });
+
+  const playbackControls = experiment.registerControls([restartControl, reloadWithChangesControl]);
 
   c.setup = function setup() {
     controls.setup(c);
-    customControls.setup(c);
+    tilesControl.setup(c);
+    playbackControls.setup(c);
 
     c.createCanvas(c.windowWidth, c.windowHeight);
     c.colorMode(c.HSB);
@@ -220,23 +250,22 @@ export const experiment: Experiment = (c: p5) => {
 
   c.draw = function draw() {
     controls.draw(c);
-    customControls.draw(c);
+    tilesControl.draw(c);
+    playbackControls.draw(c);
 
     const collapsedTile = collapseTile(grid);
 
     if (!collapsedTile) {
       controls.signals.running.value = false;
-
       return;
     }
 
     drawGrid();
-
     grid = propagateEntropy(grid);
   };
 
   c.windowResized = function () {
-    restart();
+    restart({ TILES_PER_ROW: tilesControl.signals.tilesPerRow.value });
     c.resizeCanvas(c.windowWidth, c.windowHeight);
   };
 };
