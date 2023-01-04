@@ -1,6 +1,6 @@
 import p5 from 'p5';
 
-import type { Bit, Experiment } from '../../types';
+import type { Bit, Experiment, Position } from '../../types';
 import { EXTENDED_MOVEMENT_DELTA } from '../../constants';
 import builtinControls from '../../controls/builtin';
 import factoryControls from '../../controls/factory';
@@ -56,7 +56,6 @@ export const experiment: Experiment = (c: p5) => {
 
     for (let index = 0; index < gridSize; index++) {
       const { x, y } = position.getPosition(columns, index);
-
       const tileColor = population[index] === ALIVE ? aliveTileColor : deadTileColor;
 
       c.fill(tileColor);
@@ -68,25 +67,20 @@ export const experiment: Experiment = (c: p5) => {
     let neighbors = 0;
     const tilePosition = position.getPosition(columns, index);
 
+    // Look through all 9 compass directions on the tiled board
     for (let delta of EXTENDED_MOVEMENT_DELTA) {
       let deltaX = tilePosition.x + delta.x;
       let deltaY = tilePosition.y + delta.y;
 
-      if (deltaX < 0) {
-        deltaX = columns - 1;
-      } else if (deltaX >= columns) {
-        deltaX = 0;
-      }
+      // If were close to the edge, move to what would be a natural edge connection
+      deltaX = deltaX < 0 ? columns - 1 : deltaX >= columns ? 0 : deltaX;
+      deltaY = deltaX < 0 ? rows - 1 : deltaY >= rows ? 0 : deltaY;
 
-      if (deltaY < 0) {
-        deltaY = rows - 1;
-      } else if (deltaY >= rows) {
-        deltaY = 0;
-      }
-
+      // Get the equivalent index in the population
       const targetTilePosition = { x: deltaX, y: deltaY };
       const targetIndex = position.getIndex(columns, targetTilePosition);
 
+      // Increment the count based on the state
       neighbors += population[targetIndex];
     }
 
@@ -225,5 +219,29 @@ export const experiment: Experiment = (c: p5) => {
       ALIVE_COLOR: aliveTileColor.value,
       DEAD_COLOR: deadTileColor.value,
     });
+  };
+
+  function getCoordinateFromPointer(event: MouseEvent): Position {
+    const tileX = c.floor(event.clientX / tileSize);
+    const tileY = c.floor(event.clientY / tileSize);
+    return { x: tileX, y: tileY };
+  }
+
+  c.mouseMoved = function mouseMoved(event: MouseEvent) {
+    const { x, y } = getCoordinateFromPointer(event);
+
+    c.push();
+    c.noFill();
+    c.stroke(aliveTileColor);
+    c.strokeWeight(1);
+    c.rect(x * tileSize, y * tileSize, tileSize - 2, tileSize - 2);
+    c.pop();
+  };
+
+  c.mousePressed = function mousePressed(event: MouseEvent) {
+    const tilePosition = getCoordinateFromPointer(event);
+    const index = position.getIndex(columns, tilePosition);
+
+    population[index] = c.abs(population[index] - 1) as Bit;
   };
 };
