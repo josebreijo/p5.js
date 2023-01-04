@@ -69,14 +69,23 @@ export const experiment: Experiment = (c: p5) => {
     const tilePosition = position.getPosition(columns, index);
 
     for (let delta of EXTENDED_MOVEMENT_DELTA) {
-      const deltaX = tilePosition.x + delta.x;
-      const deltaY = tilePosition.y + delta.y;
+      let deltaX = tilePosition.x + delta.x;
+      let deltaY = tilePosition.y + delta.y;
 
-      if (deltaX < 0 || deltaX >= columns || deltaY < 0 || deltaY >= rows) continue;
+      if (deltaX < 0) {
+        deltaX = columns - 1;
+      } else if (deltaX >= columns) {
+        deltaX = 0;
+      }
 
-      const targetIndex = position.getIndex(columns, { x: deltaX, y: deltaY });
+      if (deltaY < 0) {
+        deltaY = rows - 1;
+      } else if (deltaY >= rows) {
+        deltaY = 0;
+      }
 
-      if (targetIndex < 0 || targetIndex >= gridSize) continue;
+      const targetTilePosition = { x: deltaX, y: deltaY };
+      const targetIndex = position.getIndex(columns, targetTilePosition);
 
       neighbors += population[targetIndex];
     }
@@ -153,11 +162,9 @@ export const experiment: Experiment = (c: p5) => {
     setup(data) {
       if (data.value) {
         restart();
-
         tileControls.signals.aliveTileColor.value = DEFAULTS.ALIVE_COLOR;
         tileControls.signals.deadTileColor.value = DEFAULTS.DEAD_COLOR;
         tileControls.signals.tileSize.value = DEFAULTS.TILE_SIZE;
-
         data.value = false;
       }
     },
