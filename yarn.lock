@@ -390,17 +390,17 @@
     kolorist "^1.2.10"
     resolve "^1.20.0"
 
-"@preact/signals-core@^1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@preact/signals-core/-/signals-core-1.2.2.tgz#279dcc5ab249de2f2e8f6e6779b1958256ba843e"
-  integrity sha512-z3/bCj7rRA21RJb4FeJ4guCrD1CQbaURHkCTunUWQpxUMAFOPXCD8tSFqERyGrrcSb4T3Hrmdc1OAl0LXBHwiw==
+"@preact/signals-core@^1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@preact/signals-core/-/signals-core-1.2.3.tgz#36bf8b31027a5b9ade9e50cf9fba80614e8a2354"
+  integrity sha512-Kui4p7PMcEQevBgsTO0JBo3gyQ88Q3qzEvsVCuSp11t0JcN4DmGCTJcGRVSCq7Bn7lGxJBO+57jNSzDoDJ+QmA==
 
-"@preact/signals@^1.1.2":
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/@preact/signals/-/signals-1.1.2.tgz#a71c9d5dc213e314735420c3a01d84eb392b8739"
-  integrity sha512-MLNNrICSllHBhpXBvXbl7K5L1HmIjuTzgBw+zdODqjM/cLGPXdYiAWt4lqXlrxNavYdoU4eljb+TLE+DRL+6yw==
+"@preact/signals@^1.1.3":
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/@preact/signals/-/signals-1.1.3.tgz#8226d3001cc162c568225083275ed8d595f8bf1f"
+  integrity sha512-N09DuAVvc90bBZVRwD+aFhtGyHAmJLhS3IFoawO/bYJRcil4k83nBOchpCEoS0s5+BXBpahgp0Mjf+IOqP57Og==
   dependencies:
-    "@preact/signals-core" "^1.2.2"
+    "@preact/signals-core" "^1.2.3"
 
 "@prefresh/babel-plugin@0.4.4":
   version "0.4.4"
@@ -436,10 +436,10 @@
     estree-walker "^2.0.1"
     picomatch "^2.2.2"
 
-"@tabler/icons@^1.118.0":
-  version "1.118.0"
-  resolved "https://registry.yarnpkg.com/@tabler/icons/-/icons-1.118.0.tgz#8bbda4e7e3c78e4919be6794940b37c7142f223b"
-  integrity sha512-/DFANTIQBz+Moissilo47WPOp598Ht4gxvAtK0f/OC5eL8bjzxbzd4dx7d1uwf1oQ/PvaQ3Sh2UhXKP0I1D1wg==
+"@tabler/icons@^1.119.0":
+  version "1.119.0"
+  resolved "https://registry.yarnpkg.com/@tabler/icons/-/icons-1.119.0.tgz#8c590bc5a563c8673a78ccd451bedabd584b376e"
+  integrity sha512-Fk3Qq4w2SXcTjc/n1cuL5bccPkylrOMo7cYpQIf/yw6zP76LQV9dtLcHQUjFiUnaYuswR645CnURIhlafyAh9g==
 
 "@types/p5@^1.4.3":
   version "1.4.3"
@@ -718,10 +718,10 @@ update-browserslist-db@^1.0.9:
     escalade "^3.1.1"
     picocolors "^1.0.0"
 
-vite@^4.0.3:
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/vite/-/vite-4.0.3.tgz#de27ad3f263a03ae9419cdc8bc07721eadcba8b9"
-  integrity sha512-HvuNv1RdE7deIfQb8mPk51UKjqptO/4RXZ5yXSAvurd5xOckwS/gg8h9Tky3uSbnjYTgUm0hVCet1cyhKd73ZA==
+vite@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/vite/-/vite-4.0.4.tgz#4612ce0b47bbb233a887a54a4ae0c6e240a0da31"
+  integrity sha512-xevPU7M8FU0i/80DMR+YhgrzR5KS2ORy1B4xcX/cXLsvnUWvfHuqMmVU6N0YiJ4JWGRJJsLCgjEzKjG9/GKoSw==
   dependencies:
     esbuild "^0.16.3"
     postcss "^8.4.20"
