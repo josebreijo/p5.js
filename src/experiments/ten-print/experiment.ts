@@ -98,6 +98,7 @@ export const experiment: Experiment = (c: p5) => {
         reset();
         tileControls.signals.color.value = DEFAULTS.COLOR;
         tileControls.signals.probability.value = DEFAULTS.PROBABILITY_OFFSET;
+        controls.signals.running.value = true;
         data.value = false;
       }
     },
