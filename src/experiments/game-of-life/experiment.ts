@@ -23,6 +23,8 @@ export const experiment: Experiment = (c: p5) => {
   const DEAD = 0;
   const ALIVE = 1;
 
+  let aliveCount = 0;
+
   let tileSize = DEFAULTS.TILE_SIZE;
   let aliveTileColor = DEFAULTS.ALIVE_COLOR;
   let deadTileColor = DEFAULTS.DEAD_COLOR;
@@ -32,7 +34,11 @@ export const experiment: Experiment = (c: p5) => {
   let population: Bit[] = [];
 
   function generatePopulation(): Bit[] {
-    return Array.from({ length: gridSize }, () => c.random([DEAD, ALIVE]));
+    return Array.from({ length: gridSize }, () => {
+      const state: Bit = c.random([DEAD, ALIVE]);
+      aliveCount += state;
+      return state;
+    });
   }
 
   function restart(userDefaults: Partial<Defaults> = DEFAULTS) {
@@ -89,6 +95,7 @@ export const experiment: Experiment = (c: p5) => {
 
   // TODO: review offloading to worker (`experiment.compute(...)?`)
   function evolve() {
+    aliveCount = 0;
     let nextGen: Bit[] = [];
 
     for (let index = 0; index < gridSize; index++) {
@@ -99,6 +106,8 @@ export const experiment: Experiment = (c: p5) => {
       } else {
         nextGen[index] = neighbors < 2 || neighbors > 3 ? DEAD : ALIVE;
       }
+
+      aliveCount += nextGen[index];
     }
 
     return nextGen;
@@ -184,10 +193,23 @@ export const experiment: Experiment = (c: p5) => {
 
   const playbackControls = experiment.registerControls([restartControl, reloadWithChangesControl]);
 
+  const aliveCountControl = factoryControls.info({
+    id: 'aliveCount',
+    defaultValue: aliveCount.toString(),
+    label: 'alive',
+    category: 'stats',
+    draw(data) {
+      data.value = aliveCount;
+    },
+  });
+
+  const statsControls = experiment.registerControls([aliveCountControl]);
+
   c.setup = function setup() {
     controls.setup(c);
     tileControls.setup(c);
     playbackControls.setup(c);
+    statsControls.setup(c);
 
     c.createCanvas(c.windowWidth, c.windowHeight);
     c.colorMode(c.HSB);
@@ -199,6 +221,7 @@ export const experiment: Experiment = (c: p5) => {
     controls.draw(c);
     tileControls.draw(c);
     playbackControls.draw(c);
+    statsControls.draw(c);
 
     c.noStroke();
     c.fill(aliveTileColor);

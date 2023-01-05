@@ -41,6 +41,9 @@
   padding: 0.2rem;
   font-family: 'JetBrains Mono', monospace;
   cursor: pointer;
+  background-color: black;
+  color: white;
+  outline-offset: 4px;
 }
 
 .experiments option {

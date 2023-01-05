@@ -4,7 +4,7 @@ import styles from './Slider.module.css';
 export function Slider({ settings, data, onChange }: Control) {
   function onSliderChange(event: Event) {
     const target = event.target as HTMLInputElement;
-    onChange(target.value);
+    onChange(Number(target.value));
   }
 
   if (settings.type !== 'slider') {

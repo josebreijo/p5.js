@@ -3,12 +3,13 @@ import { Control, ControlCategory } from '../../types';
 type GroupedControls = Record<ControlCategory, Control[]>;
 type ControlGroup = [ControlCategory, Control[]];
 
-function groupControlsByCategory(controls: Control[]): ControlGroup[] {
-  const categoryPriority: Record<ControlCategory, number> = {
-    rendering: 0,
-    custom: 1,
-  };
+const categoryPriority: Record<ControlCategory, number> = {
+  rendering: 0,
+  stats: 1,
+  custom: 2,
+};
 
+function groupControlsByCategory(controls: Control[]): ControlGroup[] {
   const grouped = controls.reduce((groupedControls, control) => {
     const { category = 'custom' } = control.settings;
     if (category in groupedControls) {
