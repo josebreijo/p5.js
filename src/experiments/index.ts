@@ -1,14 +1,16 @@
 import type { ExperimentDefinition } from '../types';
-import gameOfLife from './game-of-life';
-import waveFunctionCollapse from './wave-function-collapse';
 import colorExploration from './color-exploration';
+import gameOfLife from './game-of-life';
 import ruleN from './rule-n';
+import tenPrint from './ten-print';
+import waveFunctionCollapse from './wave-function-collapse';
 
 const experiments: ExperimentDefinition[] = [
   gameOfLife,
   waveFunctionCollapse,
-  colorExploration,
   ruleN,
+  tenPrint,
+  colorExploration,
 ];
 
 // TODO: code-split
