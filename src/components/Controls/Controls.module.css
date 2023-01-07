@@ -22,18 +22,13 @@
 
 .header {
   display: grid;
-  grid-template-columns: min-content 1fr;
+  grid-template-columns: min-content 1fr auto;
   gap: 0.5rem;
   align-items: center;
 }
 
 .header svg {
   width: 1.5rem;
-}
-
-.header span {
-  display: inline-block;
-  padding: 0 0.5rem;
 }
 
 .experiments {

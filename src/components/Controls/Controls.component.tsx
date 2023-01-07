@@ -1,4 +1,4 @@
-import { IconAdjustmentsHorizontal } from '@tabler/icons';
+import { IconAdjustmentsHorizontal, IconQuestionCircle } from '@tabler/icons';
 
 import type { Control, ExperimentDefinition } from '../../types';
 import utils from './Controls.utils';
@@ -38,13 +38,26 @@ export function Controls({
             </option>
           ))}
         </select>
+
+        {activeExperiment.url ? (
+          <a
+            target="_blank"
+            href={activeExperiment.url}
+            title={activeExperiment.name}
+            alt={activeExperiment.description}
+          >
+            <IconQuestionCircle />
+          </a>
+        ) : null}
       </div>
 
       <div class={styles.controls}>
         {groupedControls.map(([category, controls]) => {
           return (
             <fieldset class={styles.category}>
-              <legend class={styles.legend}>{category} controls</legend>
+              <legend class={styles.legend}>
+                {category} {category !== 'stats' && 'controls'}
+              </legend>
               {controls.map((control) => {
                 const ControlComponent = control.settings.component;
 
