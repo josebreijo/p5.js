@@ -5,6 +5,8 @@
 
 .button {
   font-size: 1rem;
+  cursor: pointer;
+  outline-offset: 4px;
   font-variant-numeric: tabular-nums;
   font-family: 'JetBrains Mono', monospace;
 }

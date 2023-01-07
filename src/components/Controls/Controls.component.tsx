@@ -45,6 +45,7 @@ export function Controls({
             href={activeExperiment.url}
             title={activeExperiment.name}
             alt={activeExperiment.description}
+            class={styles.urlLink}
           >
             <IconQuestionCircle />
           </a>
