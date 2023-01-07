@@ -21,30 +21,30 @@ export type ControlFactory = (controlProps: Control) => JSXInternal.Element;
 
 export type ControlRenderFn = (data: Signal, c: p5) => void;
 
-export interface ControlDefaults {
+export interface ControlDefaultSettings {
   id: string;
-  description?: string;
   type: ControlType;
   defaultValue: Serializable;
-  component: ControlFactory;
   label?: string;
+  category?: ControlCategory;
+  description?: string;
+  component: ControlFactory;
   setup?: ControlRenderFn;
   draw?: ControlRenderFn;
-  category?: ControlCategory;
 }
 
-export interface SelectControlSettings extends ControlDefaults {
+export interface SelectControlSettings extends ControlDefaultSettings {
   type: 'select';
   defaultValue: string;
   options: string[];
 }
 
-export interface CheckboxControlSettings extends ControlDefaults {
+export interface CheckboxControlSettings extends ControlDefaultSettings {
   type: 'checkbox';
   defaultValue: boolean;
 }
 
-export interface SliderControlSettings extends ControlDefaults {
+export interface SliderControlSettings extends ControlDefaultSettings {
   type: 'slider';
   defaultValue: number;
   min: number;
@@ -52,23 +52,23 @@ export interface SliderControlSettings extends ControlDefaults {
   step: number;
 }
 
-export interface InfoControlSettings extends ControlDefaults {
+export interface InfoControlSettings extends ControlDefaultSettings {
   type: 'info';
   defaultValue: string;
 }
 
 // TODO: review props and augment base behavior
-export interface TextControlSettings extends ControlDefaults {
+export interface TextControlSettings extends ControlDefaultSettings {
   type: 'text';
   defaultValue: string;
 }
 
-export interface ColorControlSettings extends ControlDefaults {
+export interface ColorControlSettings extends ControlDefaultSettings {
   type: 'color';
   defaultValue: string;
 }
 
-export interface ButtonControlSettings extends ControlDefaults {
+export interface ButtonControlSettings extends ControlDefaultSettings {
   type: 'button';
   defaultValue: string;
 }

@@ -1,92 +1,67 @@
-import { effect } from '@preact/signals';
+import factoryControls from '../factory';
 
-import type {
-  ButtonControlSettings,
-  CheckboxControlSettings,
-  InfoControlSettings,
-  SliderControlSettings,
-} from '../../types';
-import { Checkbox } from '../../components/Checkbox';
-import { Slider } from '../../components/Slider';
-import { Info } from '../../components/Info';
-import { Button } from '../../components/Button';
-
-const running: CheckboxControlSettings = {
-  type: 'checkbox',
-  defaultValue: true,
+const running = factoryControls.checkbox({
   id: 'running',
+  defaultValue: true,
   label: 'running',
   description: 'Whether the experiment is running or not',
   category: 'rendering',
-  component: Checkbox,
   setup(data, c) {
-    effect(() => {
-      if (data.value && !c.isLooping()) c.loop();
-      if (c.isLooping() && !data.value) c.noLoop();
-    });
+    if (data.value && !c.isLooping()) c.loop();
+    if (c.isLooping() && !data.value) c.noLoop();
   },
-};
+});
 
-const frameRate: SliderControlSettings = {
-  type: 'slider',
-  defaultValue: 24,
+const frameRate = factoryControls.slider({
   id: 'frameRate',
   label: 'framerate',
+  defaultValue: 24,
   description: 'Number of frames to display each second',
   category: 'rendering',
-  component: Slider,
   min: 1,
   max: 60,
   step: 1,
   setup(data, c) {
-    effect(() => {
-      c.frameRate(Number(data.value));
-    });
+    c.frameRate(Number(data.value));
   },
-};
+});
 
-const frameCount: InfoControlSettings = {
-  type: 'info',
-  defaultValue: '0',
+const frameCount = factoryControls.info({
   id: 'frameCount',
   label: 'frame',
+  defaultValue: '0',
   description: 'Number of frames displayed since the program started',
   category: 'rendering',
-  component: Info,
   draw(data, c) {
     data.value = c.frameCount.toString();
   },
-};
+});
 
-const fps: InfoControlSettings = {
-  type: 'info',
+const fps = factoryControls.info({
   defaultValue: '',
   id: 'fps',
   label: 'fps',
   description: 'Actual framerate',
   category: 'rendering',
-  component: Info,
   draw(data, c) {
     data.value = c.frameRate().toFixed(0);
   },
-};
+});
 
-const redraw: ButtonControlSettings = {
-  type: 'button',
+const redraw = factoryControls.button({
   defaultValue: 'redraw',
   id: 'redraw',
   label: 'draw frame',
   description: 'Click to redraw screen',
   category: 'rendering',
-  component: Button,
   setup(data, c) {
-    effect(() => {
-      if (data.value) {
-        c.redraw();
-        data.value = false;
-      }
-    });
+    // TODO: review exposing a better/custom api
+    // true signals the button was clicked, done via onChange(true) on click
+    if (data.value) {
+      c.redraw();
+      data.value = false;
+    }
   },
-};
+});
 
 export default { running, frameRate, frameCount, fps, redraw };

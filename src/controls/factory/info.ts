@@ -2,16 +2,16 @@ import type { InfoControlSettings } from '../../types';
 import { Info } from '../../components/Info';
 import utils from '../utils';
 
-type InfoControlProps = Pick<
+type InfoSettings = Pick<
   InfoControlSettings,
-  'id' | 'defaultValue' | 'label' | 'setup' | 'draw' | 'category'
+  'id' | 'defaultValue' | 'label' | 'category' | 'description' | 'setup' | 'draw'
 >;
 
-function info(settings: InfoControlProps): InfoControlSettings {
+function info(settings: InfoSettings): InfoControlSettings {
   return {
     ...settings,
     type: 'info',
-    category: 'stats',
+    // TODO: review allowing to override component component from experiment
     component: Info,
     setup: utils.wrapSetupEffects(settings.setup),
   };

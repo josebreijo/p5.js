@@ -2,12 +2,12 @@ import type { ColorControlSettings } from '../../types';
 import { Color } from '../../components/Color';
 import utils from '../utils';
 
-type ColorControlProps = Pick<
+type ColorSettings = Pick<
   ColorControlSettings,
-  'id' | 'defaultValue' | 'label' | 'setup' | 'draw'
+  'id' | 'defaultValue' | 'label' | 'category' | 'description' | 'setup' | 'draw'
 >;
 
-function color(settings: ColorControlProps): ColorControlSettings {
+function color(settings: ColorSettings): ColorControlSettings {
   return {
     ...settings,
     type: 'color',

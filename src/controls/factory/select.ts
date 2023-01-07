@@ -2,12 +2,12 @@ import type { SelectControlSettings } from '../../types';
 import { Select } from '../../components/Select';
 import utils from '../utils';
 
-type SelectControlProps = Pick<
+type SelectSettings = Pick<
   SelectControlSettings,
-  'id' | 'defaultValue' | 'options' | 'label' | 'setup' | 'draw'
+  'id' | 'defaultValue' | 'label' | 'category' | 'description' | 'options' | 'setup' | 'draw'
 >;
 
-function select(settings: SelectControlProps): SelectControlSettings {
+function select(settings: SelectSettings): SelectControlSettings {
   return {
     ...settings,
     type: 'select',

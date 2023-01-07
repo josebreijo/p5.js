@@ -2,12 +2,21 @@ import type { SliderControlSettings } from '../../types';
 import { Slider } from '../../components/Slider';
 import utils from '../utils';
 
-type SliderControlProps = Pick<
+type SliderSettings = Pick<
   SliderControlSettings,
-  'id' | 'defaultValue' | 'label' | 'min' | 'max' | 'step' | 'setup' | 'draw'
+  | 'id'
+  | 'defaultValue'
+  | 'label'
+  | 'category'
+  | 'description'
+  | 'min'
+  | 'max'
+  | 'step'
+  | 'setup'
+  | 'draw'
 >;
 
-function slider(settings: SliderControlProps): SliderControlSettings {
+function slider(settings: SliderSettings): SliderControlSettings {
   return {
     ...settings,
     type: 'slider',

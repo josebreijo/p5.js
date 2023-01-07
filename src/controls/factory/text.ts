@@ -4,7 +4,7 @@ import utils from '../utils';
 
 type TextControlProps = Pick<
   TextControlSettings,
-  'id' | 'defaultValue' | 'label' | 'setup' | 'draw'
+  'id' | 'defaultValue' | 'label' | 'category' | 'description' | 'setup' | 'draw'
 >;
 
 function text(settings: TextControlProps): TextControlSettings {

@@ -2,12 +2,12 @@ import type { ButtonControlSettings } from '../../types';
 import { Button } from '../../components/Button';
 import utils from '../utils';
 
-type ButtonControlProps = Pick<
+type ButtonSettings = Pick<
   ButtonControlSettings,
-  'id' | 'defaultValue' | 'label' | 'category' | 'setup' | 'draw'
+  'id' | 'defaultValue' | 'label' | 'category' | 'description' | 'setup' | 'draw'
 >;
 
-function button(settings: ButtonControlProps): ButtonControlSettings {
+function button(settings: ButtonSettings): ButtonControlSettings {
   return {
     ...settings,
     type: 'button',
