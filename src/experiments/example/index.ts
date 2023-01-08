@@ -2,9 +2,9 @@ import type { ExperimentDefinition } from '../../types';
 import { experiment } from './experiment';
 
 const experimentDefinition: ExperimentDefinition = {
-  id: 'experiment-id',
-  name: 'Experiment title',
-  description: 'Experiment description',
+  id: 'sample',
+  name: 'sample text',
+  description: 'sample description',
   url: 'https://example.com',
   experiment,
 };

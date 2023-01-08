@@ -1,4 +1,4 @@
-import { Control, ControlCategory } from '../../types';
+import { Control, ControlCategory, ExperimentDefinition } from '../../types';
 
 type GroupedControls = Record<ControlCategory, Control[]>;
 type ControlGroup = [ControlCategory, Control[]];
@@ -33,4 +33,18 @@ function groupControlsByCategory(controls: Control[]): ControlGroup[] {
   });
 }
 
-export default { groupControlsByCategory };
+function moduleIsExperiment(module: unknown): module is ExperimentDefinition {
+  return (
+    module !== undefined &&
+    module !== null &&
+    typeof module === 'object' &&
+    'id' in module &&
+    typeof module.id === 'string' &&
+    'name' in module &&
+    typeof module.name === 'string' &&
+    'experiment' in module &&
+    typeof module.experiment === 'function'
+  );
+}
+
+export default { groupControlsByCategory, moduleIsExperiment };
