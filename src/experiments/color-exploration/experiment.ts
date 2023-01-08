@@ -26,7 +26,7 @@ export const experiment: Experiment = (c: p5) => {
     c.colorMode(c.HSB);
     c.fill(255);
     c.textSize(26);
-    c.textFont('Iosevka Fixed');
+    c.textFont('JetBrains Mono');
   };
 
   c.draw = function draw() {
@@ -50,7 +50,9 @@ export const experiment: Experiment = (c: p5) => {
     c.text(currentColor, 20, 50);
   };
 
-  c.mousePressed = function () {
+  // TODO: avoid clicks on the controls
+  c.mousePressed = function (event) {
+    console.log(event);
     rotateHue = !rotateHue;
 
     if (!rotateHue) {

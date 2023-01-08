@@ -8,7 +8,7 @@ const running = factoryControls.checkbox({
   category: 'rendering',
   setup(data, c) {
     if (data.value && !c.isLooping()) c.loop();
-    if (c.isLooping() && !data.value) c.noLoop();
+    if (!data.value && c.isLooping()) c.noLoop();
   },
 });
 

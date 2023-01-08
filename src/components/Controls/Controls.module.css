@@ -39,6 +39,7 @@
   background-color: black;
   color: white;
   outline-offset: 4px;
+  border-radius: 4px;
 }
 
 .experiments option {
@@ -47,6 +48,7 @@
 
 .urlLink {
   text-decoration: none;
+  color: white;
 }
 
 .urlLink svg {
