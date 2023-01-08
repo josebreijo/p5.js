@@ -1,5 +1,5 @@
 import type { Signal } from '@preact/signals';
-import { JSXInternal } from 'preact/src/jsx';
+import type { JSXInternal } from 'preact/src/jsx';
 import p5 from 'p5';
 
 export type Bit = 0 | 1;
