@@ -51,8 +51,7 @@ export const experiment: Experiment = (c: p5) => {
   };
 
   // TODO: avoid clicks on the controls
-  c.mousePressed = function (event) {
-    console.log(event);
+  c.mousePressed = function () {
     rotateHue = !rotateHue;
 
     if (!rotateHue) {

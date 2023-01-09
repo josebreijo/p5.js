@@ -16,6 +16,8 @@ import styles from './Controls.module.css';
 
 type Experiments = Record<string, ExperimentDefinition>;
 
+const DEFAULT_EXPERIMENT_ID = 'game-of-life';
+
 let sketchInstance: p5 | null = null;
 const experimentsImportMap = import.meta.glob('../../experiments/*/index.ts');
 
@@ -30,6 +32,7 @@ export function Controls() {
   const groupedControls = utils.groupControlsByCategory(controls);
 
   useEffect(() => {
+    // TODO: review loading onChange depending on network conditions
     async function loadExperiments() {
       try {
         const experimentDefinitions: Experiments = {};
@@ -38,6 +41,7 @@ export function Controls() {
           const module = (await moduleImportCall()) as { default: ExperimentDefinition };
 
           if (!utils.moduleIsExperiment(module.default)) {
+            // TODO: enhance error reporting
             throw new Error(`Incorrect experiment declaration for "${filePath}".`);
           }
 
@@ -53,7 +57,7 @@ export function Controls() {
         }
 
         setExperiments(experimentDefinitions);
-        setActiveExperiment(Object.values(experimentDefinitions)[0]);
+        setActiveExperiment(experimentDefinitions[DEFAULT_EXPERIMENT_ID]);
       } catch (error) {
         console.error('Error loading experiments: ', error);
       }
@@ -84,7 +88,7 @@ export function Controls() {
         // A list of effects to be run at p5.js lifecycle methods.
         const controlsSetupQueue: ((c: p5) => void)[] = [];
         const controlsDrawQueue: ((c: p5) => void)[] = [];
-        // A collection of signals and methods to flush rendering effects.
+        // A simple API to host all signals and methods to flush setup and draw phase effects
         const controls: ExperimentControls = { setup() {}, draw() {}, signals: {} };
 
         for (const settings of controlsSettings) {
@@ -108,7 +112,7 @@ export function Controls() {
           registeredControls.push({ data, onChange, settings });
         }
 
-        // Binds rendering phase effects
+        // flush rendering phase effects on call
         controls.setup = function setup(c: p5) {
           for (const setupFn of controlsSetupQueue) setupFn(c);
         };
@@ -152,7 +156,11 @@ export function Controls() {
           {Object.values(experiments).map(
             (experiment) =>
               experiment.id !== 'sample' && (
-                <option value={experiment.id} selected={experiment.id === activeExperiment.id}>
+                <option
+                  key={experiment.id}
+                  value={experiment.id}
+                  selected={experiment.id === activeExperiment.id}
+                >
                   {experiment.name}
                 </option>
               ),
