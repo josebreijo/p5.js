@@ -30,7 +30,15 @@ export const experiment: Experiment = (c: p5) => {
   let rows = getRows();
   let columns = getColumns();
 
-  function reset(userDefaults: Partial<Defaults> = DEFAULTS) {
+  const controls = experiment.registerControls([
+    builtinControls.rendering.running,
+    builtinControls.rendering.fps,
+    builtinControls.rendering.frameRate,
+    builtinControls.rendering.frameCount,
+    builtinControls.rendering.redraw,
+  ]);
+
+  function restart(userDefaults: Partial<Defaults> = DEFAULTS) {
     size = userDefaults.SIZE || DEFAULTS.SIZE;
     color = userDefaults.COLOR || DEFAULTS.COLOR;
     probabilityOffset = userDefaults.PROBABILITY_OFFSET || DEFAULTS.PROBABILITY_OFFSET;
@@ -40,17 +48,9 @@ export const experiment: Experiment = (c: p5) => {
     columns = getColumns();
     rows = getRows();
 
+    controls.signals.running.value = true;
     c.clear(0, 0, 0, 0);
-    c.redraw();
   }
-
-  const controls = experiment.registerControls([
-    builtinControls.rendering.running,
-    builtinControls.rendering.fps,
-    builtinControls.rendering.frameRate,
-    builtinControls.rendering.frameCount,
-    builtinControls.rendering.redraw,
-  ]);
 
   const sizeControl = factoryControls.slider({
     id: 'size',
@@ -60,8 +60,8 @@ export const experiment: Experiment = (c: p5) => {
     max: c.floor(c.windowWidth / 5),
     step: 1,
     setup(data) {
-      reset({ SIZE: data.value, COLOR: color, PROBABILITY_OFFSET: probabilityOffset });
       controls.signals.running.value = true;
+      restart({ SIZE: data.value, COLOR: color, PROBABILITY_OFFSET: probabilityOffset });
     },
   });
 
@@ -88,41 +88,26 @@ export const experiment: Experiment = (c: p5) => {
 
   const tileControls = experiment.registerControls([colorControl, sizeControl, probabilityControl]);
 
-  const resetControl = factoryControls.button({
-    id: 'reset',
-    defaultValue: 'reset',
-    label: 'reset experiment',
-    category: 'rendering',
-    setup(data) {
-      if (data.value) {
-        reset();
-        tileControls.signals.color.value = DEFAULTS.COLOR;
-        tileControls.signals.probability.value = DEFAULTS.PROBABILITY_OFFSET;
-        controls.signals.running.value = true;
-        data.value = false;
-      }
+  const restartControl = builtinControls.rendering.restart({
+    restartExperiment() {
+      tileControls.signals.size.value = DEFAULTS.SIZE;
+      tileControls.signals.color.value = DEFAULTS.COLOR;
+      tileControls.signals.probability.value = DEFAULTS.PROBABILITY_OFFSET;
+      restart();
     },
   });
 
-  const reloadWithChangesControl = factoryControls.button({
-    id: 'reloadWithChanges',
-    defaultValue: 'reload',
-    label: 'reload with changes',
-    category: 'custom',
-    setup(data) {
-      if (data.value) {
-        reset({
-          COLOR: tileControls.signals.color.value,
-          SIZE: tileControls.signals.size.value,
-          PROBABILITY_OFFSET: tileControls.signals.probability.value,
-        });
-        data.value = false;
-        controls.signals.running.value = true;
-      }
+  const reloadWithChangesControl = builtinControls.rendering.reload({
+    reloadExperiment() {
+      restart({
+        SIZE: tileControls.signals.size.value,
+        COLOR: tileControls.signals.color.value,
+        PROBABILITY_OFFSET: tileControls.signals.probability.value,
+      });
     },
   });
 
-  const playbackControls = experiment.registerControls([resetControl, reloadWithChangesControl]);
+  const playbackControls = experiment.registerControls([restartControl, reloadWithChangesControl]);
 
   c.setup = function setup() {
     controls.setup(c);
@@ -174,6 +159,6 @@ export const experiment: Experiment = (c: p5) => {
   c.windowResized = function windowResized() {
     c.resizeCanvas(c.windowWidth, c.windowHeight);
     const { color, size, probabilityOffset } = tileControls.signals;
-    reset({ SIZE: size.value, COLOR: color.value, PROBABILITY_OFFSET: probabilityOffset.value });
+    restart({ SIZE: size.value, COLOR: color.value, PROBABILITY_OFFSET: probabilityOffset.value });
   };
 };

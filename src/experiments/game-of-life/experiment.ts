@@ -41,6 +41,14 @@ export const experiment: Experiment = (c: p5) => {
     });
   }
 
+  const controls = experiment.registerControls([
+    builtinControls.rendering.running,
+    builtinControls.rendering.fps,
+    builtinControls.rendering.frameRate,
+    builtinControls.rendering.frameCount,
+    builtinControls.rendering.redraw,
+  ]);
+
   function restart(userDefaults: Partial<Defaults> = DEFAULTS) {
     tileSize = userDefaults.TILE_SIZE || DEFAULTS.TILE_SIZE;
     aliveTileColor = userDefaults.ALIVE_COLOR || DEFAULTS.ALIVE_COLOR;
@@ -51,7 +59,9 @@ export const experiment: Experiment = (c: p5) => {
     gridSize = columns * rows;
     population = generatePopulation();
 
-    c.redraw();
+    // TODO: review hiding this implementation detail
+    controls.signals.running.value = true;
+    c.clear(0, 0, 0, 0);
   }
 
   function drawGrid() {
@@ -113,14 +123,6 @@ export const experiment: Experiment = (c: p5) => {
     return nextGen;
   }
 
-  const controls = experiment.registerControls([
-    builtinControls.rendering.running,
-    builtinControls.rendering.fps,
-    builtinControls.rendering.frameRate,
-    builtinControls.rendering.frameCount,
-    builtinControls.rendering.redraw,
-  ]);
-
   const aliveTileColorControl = factoryControls.color({
     id: 'aliveTileColor',
     defaultValue: aliveTileColor,
@@ -157,37 +159,21 @@ export const experiment: Experiment = (c: p5) => {
     tileSizeControl,
   ]);
 
-  const restartControl = factoryControls.button({
-    id: 'restartButton',
-    defaultValue: 'restart',
-    label: 'restart experiment',
-    category: 'rendering',
-    setup(data) {
-      if (data.value) {
-        restart();
-        tileControls.signals.aliveTileColor.value = DEFAULTS.ALIVE_COLOR;
-        tileControls.signals.deadTileColor.value = DEFAULTS.DEAD_COLOR;
-        tileControls.signals.tileSize.value = DEFAULTS.TILE_SIZE;
-        data.value = false;
-      }
+  const restartControl = builtinControls.rendering.restart({
+    restartExperiment() {
+      tileControls.signals.aliveTileColor.value = DEFAULTS.ALIVE_COLOR;
+      tileControls.signals.deadTileColor.value = DEFAULTS.DEAD_COLOR;
+      tileControls.signals.tileSize.value = DEFAULTS.TILE_SIZE;
+      restart();
     },
   });
-
-  const reloadWithChangesControl = factoryControls.button({
-    id: 'reloadWithChangeButton',
-    defaultValue: 'reload',
-    label: 'reload with changes',
-    category: 'custom',
-    setup(data) {
-      if (data.value) {
-        restart({
-          ALIVE_COLOR: tileControls.signals.aliveTileColor.value,
-          DEAD_COLOR: tileControls.signals.deadTileColor.value,
-          TILE_SIZE: tileControls.signals.tileSize.value,
-        });
-
-        data.value = false;
-      }
+  const reloadWithChangesControl = builtinControls.rendering.reload({
+    reloadExperiment() {
+      restart({
+        ALIVE_COLOR: tileControls.signals.aliveTileColor.value,
+        DEAD_COLOR: tileControls.signals.deadTileColor.value,
+        TILE_SIZE: tileControls.signals.tileSize.value,
+      });
     },
   });
 
@@ -236,7 +222,6 @@ export const experiment: Experiment = (c: p5) => {
 
     const { aliveTileColor, deadTileColor, tileSize } = tileControls.signals;
 
-    // TODO: review and generalize `reset` approach
     restart({
       TILE_SIZE: tileSize.value,
       ALIVE_COLOR: aliveTileColor.value,

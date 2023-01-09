@@ -1,5 +1,6 @@
 import factoryControls from '../factory';
 
+// TODO: review decoupling the concept of running from the framerate
 const running = factoryControls.checkbox({
   id: 'running',
   defaultValue: true,
@@ -64,4 +65,34 @@ const redraw = factoryControls.button({
   },
 });
 
-export default { running, frameRate, frameCount, fps, redraw };
+function restart({ restartExperiment }: { restartExperiment: () => void }) {
+  return factoryControls.button({
+    id: 'restart',
+    defaultValue: 'restart',
+    label: 'restart experiment',
+    category: 'rendering',
+    setup(data) {
+      if (data.value) {
+        restartExperiment();
+        data.value = false;
+      }
+    },
+  });
+}
+
+function reload({ reloadExperiment }: { reloadExperiment: () => void }) {
+  return factoryControls.button({
+    id: 'reload',
+    defaultValue: 'reload',
+    label: 'reload with changes',
+    category: 'custom',
+    setup(data) {
+      if (data.value) {
+        reloadExperiment();
+        data.value = false;
+      }
+    },
+  });
+}
+
+export default { running, frameRate, frameCount, fps, redraw, restart, reload };

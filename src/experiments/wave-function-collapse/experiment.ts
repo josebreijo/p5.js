@@ -4,36 +4,28 @@ import type { Experiment } from '../../types';
 import type { Option, Tile } from './types';
 import builtinControls from '../../controls/builtin';
 import position from '../../utils/position';
-import utils from './utils';
-import { BLANK, RULES, DOWN, LEFT, MOVEMENT_DELTA, RIGHT, TILES_UI, UP } from './constants';
 import factoryControls from '../../controls/factory';
+import { BLANK, RULES, DOWN, LEFT, MOVEMENT_DELTA, RIGHT, TILES_UI, UP } from './constants';
+import utils from './utils';
 
 interface Defaults {
   TILES_PER_ROW: number;
+  OPTIONS: Option[];
 }
 
 const DEFAULTS: Defaults = {
   TILES_PER_ROW: 20,
+  OPTIONS: [BLANK, UP, RIGHT, DOWN, LEFT],
 };
 
 // @ts-expect-error `exposeControl` defined in caller
 export const experiment: Experiment = (c: p5) => {
-  const controls = experiment.registerControls([
-    builtinControls.rendering.running,
-    builtinControls.rendering.fps,
-    builtinControls.rendering.frameRate,
-    builtinControls.rendering.frameCount,
-    builtinControls.rendering.redraw,
-  ]);
-
-  const OPTIONS: Option[] = [BLANK, UP, RIGHT, DOWN, LEFT];
-
   let tilesPerRow = DEFAULTS.TILES_PER_ROW;
-  let minimumTilesPerRow = 20;
+  let minimumColumns = 20;
 
   let grid: Tile[] = Array.from({ length: tilesPerRow * tilesPerRow }).map((_, index) => ({
     index,
-    options: OPTIONS,
+    options: DEFAULTS.OPTIONS,
     seed: false,
     collapsed: false,
     position: position.getPosition(tilesPerRow, index),
@@ -42,14 +34,22 @@ export const experiment: Experiment = (c: p5) => {
   let seedIndex = c.floor(c.random(tilesPerRow * tilesPerRow));
 
   grid[seedIndex].seed = true;
-  grid[seedIndex].options = utils.randomizeOptions(OPTIONS);
+  grid[seedIndex].options = utils.randomizeOptions(DEFAULTS.OPTIONS);
+
+  const controls = experiment.registerControls([
+    builtinControls.rendering.running,
+    builtinControls.rendering.fps,
+    builtinControls.rendering.frameRate,
+    builtinControls.rendering.frameCount,
+    builtinControls.rendering.redraw,
+  ]);
 
   function restart(userDefaults: Partial<Defaults> = DEFAULTS) {
     tilesPerRow = userDefaults.TILES_PER_ROW || DEFAULTS.TILES_PER_ROW;
 
     grid = Array.from({ length: tilesPerRow * tilesPerRow }).map((_, index) => ({
       index,
-      options: OPTIONS,
+      options: DEFAULTS.OPTIONS,
       seed: false,
       collapsed: false,
       position: position.getPosition(tilesPerRow, index),
@@ -58,21 +58,47 @@ export const experiment: Experiment = (c: p5) => {
     seedIndex = c.floor(c.random(tilesPerRow * tilesPerRow));
 
     grid[seedIndex].seed = true;
-    grid[seedIndex].options = utils.randomizeOptions(OPTIONS);
+    grid[seedIndex].options = utils.randomizeOptions(DEFAULTS.OPTIONS);
 
     controls.signals.running.value = true;
     c.clear(0, 0, 0, 0);
-    c.redraw();
   }
+
+  const tilesPerRowControl = factoryControls.slider({
+    id: 'tilesPerRow',
+    defaultValue: tilesPerRow,
+    label: 'tiles per row',
+    min: 5,
+    max: c.floor(c.windowWidth / 10),
+    step: 1,
+    setup(data) {
+      restart({ TILES_PER_ROW: data.value });
+    },
+  });
+
+  const tilesControl = experiment.registerControls([tilesPerRowControl]);
+
+  const restartControl = builtinControls.rendering.restart({
+    restartExperiment() {
+      tilesControl.signals.tilesPerRow.value = DEFAULTS.TILES_PER_ROW;
+      restart();
+    },
+  });
+
+  const reloadWithChangesControl = builtinControls.rendering.reload({
+    reloadExperiment() {
+      restart({ TILES_PER_ROW: tilesControl.signals.tilesPerRow.value });
+    },
+  });
+
+  const playbackControls = experiment.registerControls([restartControl, reloadWithChangesControl]);
 
   function collapseTile(grid: Tile[]) {
     const sortedByLessEntropy = [...grid]
       .filter((tile) => !tile.collapsed)
       .sort((first, second) => first.options.length - second.options.length);
 
-    if (sortedByLessEntropy.length === 0) {
-      return null;
-    }
+    if (sortedByLessEntropy.length === 0) return null;
 
     // Select the least entropy tiles
     const [leastEntropyTile] = sortedByLessEntropy;
@@ -152,7 +178,7 @@ export const experiment: Experiment = (c: p5) => {
     const tileHue = c.map(tileX, 0, c.windowWidth, 0, 360);
     const tileLightness = c.map(tileY, 0, c.windowHeight, 40, 100);
     const tileColor = c.color(tileHue, 100, tileLightness);
-    const maxTilesPerRow = c.floor(c.windowWidth / minimumTilesPerRow);
+    const maxTilesPerRow = c.floor(c.windowWidth / minimumColumns);
     const tileStrokeWeight = c.map(tilesPerRow, 5, maxTilesPerRow, 6, 1);
 
     c.push();
@@ -195,49 +221,6 @@ export const experiment: Experiment = (c: p5) => {
       }
     }
   }
-
-  const tilesPerRowControl = factoryControls.slider({
-    id: 'tilesPerRow',
-    defaultValue: tilesPerRow,
-    label: 'tiles per row',
-    min: 5,
-    max: c.floor(c.windowWidth / 10),
-    step: 1,
-    setup(data) {
-      restart({ TILES_PER_ROW: data.value });
-    },
-  });
-
-  const tilesControl = experiment.registerControls([tilesPerRowControl]);
-
-  const restartControl = factoryControls.button({
-    id: 'restartButton',
-    defaultValue: 'restart',
-    label: 'restart experiment',
-    category: 'rendering',
-    setup(data) {
-      if (data.value) {
-        restart();
-        tilesControl.signals.tilesPerRow.value = DEFAULTS.TILES_PER_ROW;
-        data.value = false;
-      }
-    },
-  });
-
-  const reloadWithChangesControl = factoryControls.button({
-    id: 'reloadWithChangeButton',
-    defaultValue: 'reload',
-    label: 'reload with changes',
-    category: 'custom',
-    setup(data) {
-      if (data.value) {
-        restart({ TILES_PER_ROW: tilesControl.signals.tilesPerRow.value });
-        data.value = false;
-      }
-    },
-  });
-
-  const playbackControls = experiment.registerControls([restartControl, reloadWithChangesControl]);
 
   c.setup = function setup() {
     controls.setup(c);
