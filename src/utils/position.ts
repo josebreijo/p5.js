@@ -1,4 +1,4 @@
-import type { Position } from '../types';
+import type { Position } from 'app/types';
 
 function getIndex(upperBound: number, position: Position): number {
   return position.x + position.y * upperBound;

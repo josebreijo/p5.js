@@ -1,6 +1,6 @@
-import type { CheckboxControlSettings } from '../../types';
-import { Checkbox } from '../../components/Checkbox';
-import utils from '../utils';
+import type { CheckboxControlSettings } from 'app/types';
+import { Checkbox } from 'app/components/Checkbox';
+import utils from 'app/controls/utils';
 
 type CheckboxSettings = Pick<
   CheckboxControlSettings,

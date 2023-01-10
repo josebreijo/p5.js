@@ -1,4 +1,4 @@
-import { Bit } from '../../types';
+import { Bit } from 'app/types';
 
 function generateRuleSet(rule: number, { BYTE_LENGTH: BITS = 8 } = {}) {
   const ruleSet: Record<string, Bit> = {};

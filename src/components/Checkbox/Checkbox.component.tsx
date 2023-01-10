@@ -1,4 +1,4 @@
-import { Control } from '../../types';
+import { Control } from 'app/types';
 import styles from './Checkbox.module.css';
 
 export function Checkbox({ settings, data, onChange }: Control) {

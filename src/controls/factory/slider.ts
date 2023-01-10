@@ -1,6 +1,6 @@
-import type { SliderControlSettings } from '../../types';
-import { Slider } from '../../components/Slider';
-import utils from '../utils';
+import type { SliderControlSettings } from 'app/types';
+import { Slider } from 'app/components/Slider';
+import utils from 'app/controls/utils';
 
 type SliderSettings = Pick<
   SliderControlSettings,

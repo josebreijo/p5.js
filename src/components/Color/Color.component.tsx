@@ -1,4 +1,4 @@
-import { Control } from '../../types';
+import { Control } from 'app/types';
 import styles from './Color.module.css';
 
 export function Color({ settings, data, onChange }: Control) {

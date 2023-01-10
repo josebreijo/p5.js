@@ -1,6 +1,6 @@
 import { effect } from '@preact/signals';
 
-import type { ControlRenderFn } from '../types';
+import type { ControlRenderFn } from 'app/types';
 
 function wrapSetupEffects(userSetup?: ControlRenderFn): ControlRenderFn | undefined {
   if (!userSetup) return undefined;

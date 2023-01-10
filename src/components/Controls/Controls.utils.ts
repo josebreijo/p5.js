@@ -1,4 +1,4 @@
-import { Control, ControlCategory, ExperimentDefinition } from '../../types';
+import { Control, ControlCategory, ExperimentDefinition } from 'app/types';
 
 type GroupedControls = Record<ControlCategory, Control[]>;
 type ControlGroup = [ControlCategory, Control[]];

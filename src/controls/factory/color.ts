@@ -1,6 +1,6 @@
-import type { ColorControlSettings } from '../../types';
-import { Color } from '../../components/Color';
-import utils from '../utils';
+import type { ColorControlSettings } from 'app/types';
+import { Color } from 'app/components/Color';
+import utils from 'app/controls/utils';
 
 type ColorSettings = Pick<
   ColorControlSettings,

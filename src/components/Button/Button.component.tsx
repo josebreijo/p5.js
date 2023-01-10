@@ -1,4 +1,4 @@
-import { Control } from '../../types';
+import { Control } from 'app/types';
 import styles from './Button.module.css';
 
 export function Button({ settings, onChange }: Control) {

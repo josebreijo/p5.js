@@ -1,8 +1,8 @@
 import p5 from 'p5';
 
-import type { Bit, Experiment } from '../../types';
-import builtinControls from '../../controls/builtin';
-import factoryControls from '../../controls/factory';
+import type { Bit, Experiment } from 'app/types';
+import builtinControls from 'app/controls/builtin';
+import factoryControls from 'app/controls/factory';
 import utils from './utils';
 
 interface Defaults {

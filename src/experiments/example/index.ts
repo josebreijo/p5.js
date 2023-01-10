@@ -1,4 +1,4 @@
-import type { ExperimentDefinition } from '../../types';
+import type { ExperimentDefinition } from 'app/types';
 import { experiment } from './experiment';
 
 const experimentDefinition: ExperimentDefinition = {

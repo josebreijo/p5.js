@@ -1,6 +1,6 @@
-import type { TextControlSettings } from '../../types';
-import { Text } from '../../components/Text';
-import utils from '../utils';
+import type { TextControlSettings } from 'app/types';
+import { Text } from 'app/components/Text';
+import utils from 'app/controls/utils';
 
 type TextControlProps = Pick<
   TextControlSettings,

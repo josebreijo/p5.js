@@ -1,10 +1,10 @@
 import p5 from 'p5';
 
-import type { Bit, Experiment, Position } from '../../types';
-import { EXTENDED_MOVEMENT_DELTA } from '../../constants';
-import builtinControls from '../../controls/builtin';
-import factoryControls from '../../controls/factory';
-import position from '../../utils/position';
+import type { Bit, Experiment, Position } from 'app/types';
+import { EXTENDED_MOVEMENT_DELTA } from 'app/constants';
+import builtinControls from 'app/controls/builtin';
+import factoryControls from 'app/controls/factory';
+import position from 'app/utils/position';
 
 interface Defaults {
   TILE_SIZE: number;

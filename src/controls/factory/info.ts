@@ -1,6 +1,6 @@
-import type { InfoControlSettings } from '../../types';
-import { Info } from '../../components/Info';
-import utils from '../utils';
+import type { InfoControlSettings } from 'app/types';
+import { Info } from 'app/components/Info';
+import utils from 'app/controls/utils';
 
 type InfoSettings = Pick<
   InfoControlSettings,

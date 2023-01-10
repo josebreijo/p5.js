@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'preact/hooks';
 
-import type { Control } from '../../types';
+import type { Control } from 'app/types';
 import styles from './Text.module.css';
 
 export function Text({ settings, data, onChange }: Control) {

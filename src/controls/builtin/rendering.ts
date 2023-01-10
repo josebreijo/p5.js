@@ -1,4 +1,4 @@
-import factoryControls from '../factory';
+import factoryControls from 'app/controls/factory';
 
 // TODO: review decoupling the concept of running from the framerate
 const running = factoryControls.checkbox({

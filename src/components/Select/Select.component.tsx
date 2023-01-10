@@ -1,4 +1,4 @@
-import { Control } from '../../types';
+import { Control } from 'app/types';
 import styles from './Select.module.css';
 
 export function Select({ data, onChange, settings }: Control) {

@@ -3,14 +3,9 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import { IconAdjustmentsHorizontal, IconQuestionCircle } from '@tabler/icons';
 import p5 from 'p5';
 
-import type {
-  Control,
-  ControlSettings,
-  ExperimentControls,
-  ExperimentDefinition,
-} from '../../types';
-import { SKETCH_NODE_ID } from '../../constants';
-import dom from '../../utils/dom';
+import type { Control, ControlSettings, ExperimentControls, ExperimentDefinition } from 'app/types';
+import { SKETCH_NODE_ID } from 'app/constants';
+import dom from 'app/utils/dom';
 import utils from './Controls.utils';
 import styles from './Controls.module.css';
 

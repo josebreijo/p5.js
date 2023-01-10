@@ -1,7 +1,7 @@
 import p5 from 'p5';
 
-import type { Experiment } from '../../types';
-import builtinControls from '../../controls/builtin';
+import type { Experiment } from 'app/types';
+import builtinControls from 'app/controls/builtin';
 
 // @ts-expect-error `exposeControl` defined in caller
 export const experiment: Experiment = (c: p5) => {

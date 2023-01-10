@@ -1,6 +1,6 @@
-import type { SelectControlSettings } from '../../types';
-import { Select } from '../../components/Select';
-import utils from '../utils';
+import type { SelectControlSettings } from 'app/types';
+import { Select } from 'app/components/Select';
+import utils from 'app/controls/utils';
 
 type SelectSettings = Pick<
   SelectControlSettings,

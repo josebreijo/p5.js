@@ -1,10 +1,10 @@
 import p5 from 'p5';
 
-import type { Experiment } from '../../types';
+import type { Experiment } from 'app/types';
 import type { Option, Tile } from './types';
-import builtinControls from '../../controls/builtin';
-import position from '../../utils/position';
-import factoryControls from '../../controls/factory';
+import builtinControls from 'app/controls/builtin';
+import position from 'app/utils/position';
+import factoryControls from 'app/controls/factory';
 import { BLANK, RULES, DOWN, LEFT, MOVEMENT_DELTA, RIGHT, TILES_UI, UP } from './constants';
 import utils from './utils';
 

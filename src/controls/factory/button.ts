@@ -1,6 +1,6 @@
-import type { ButtonControlSettings } from '../../types';
-import { Button } from '../../components/Button';
-import utils from '../utils';
+import type { ButtonControlSettings } from 'app/types';
+import { Button } from 'app/components/Button';
+import utils from 'app/controls/utils';
 
 type ButtonSettings = Pick<
   ButtonControlSettings,

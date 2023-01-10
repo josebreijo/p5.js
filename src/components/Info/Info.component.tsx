@@ -1,4 +1,4 @@
-import { Control } from '../../types';
+import { Control } from 'app/types';
 import styles from './Info.module.css';
 
 export function Info({ settings, data }: Control) {

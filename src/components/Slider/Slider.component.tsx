@@ -1,4 +1,4 @@
-import { Control } from '../../types';
+import { Control } from 'app/types';
 import styles from './Slider.module.css';
 
 export function Slider({ settings, data, onChange }: Control) {
