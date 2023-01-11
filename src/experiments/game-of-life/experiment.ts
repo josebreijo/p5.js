@@ -47,6 +47,7 @@ export const experiment: Experiment = (c: p5) => {
     builtinControls.rendering.frameRate,
     builtinControls.rendering.frameCount,
     builtinControls.rendering.redraw,
+    builtinControls.storage.saveFrame(experiment.name),
   ]);
 
   function restart(userDefaults: Partial<Defaults> = DEFAULTS) {
@@ -192,6 +193,7 @@ export const experiment: Experiment = (c: p5) => {
   const statsControls = experiment.registerControls([aliveCountControl]);
 
   c.setup = function setup() {
+    console.log(c);
     controls.setup(c);
     tileControls.setup(c);
     playbackControls.setup(c);

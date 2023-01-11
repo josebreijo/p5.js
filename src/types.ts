@@ -15,7 +15,7 @@ export type Globals = Record<string, Serializable>;
 
 export type ControlType = 'select' | 'checkbox' | 'slider' | 'info' | 'text' | 'color' | 'button';
 
-export type ControlCategory = 'rendering' | 'stats' | 'custom';
+export type ControlCategory = 'rendering' | 'storage' | 'stats' | 'custom';
 
 export type ControlFactory = (controlProps: Control) => JSXInternal.Element;
 

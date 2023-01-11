@@ -1,3 +1,4 @@
 import rendering from './rendering';
+import storage from './storage';
 
-export default { rendering };
+export default { rendering, storage };
