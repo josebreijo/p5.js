@@ -24,8 +24,9 @@ For example, we could build a slider control to alter the [p5.js frameRate](http
 
 ```ts
 import p5 from 'p5';
+import { effect } from '@preact/signals';
 
-import type { Experiment } from '../../types';
+import type { Experiment } from 'app/types';
 
 export const experiment: Experiment = (c: p5) => {
   const frameRate: SliderControlSettings = {
@@ -40,7 +41,7 @@ export const experiment: Experiment = (c: p5) => {
     step: 1,
     component: Slider,
     setup(data, c) { // data points to the signal, c to p5.js context
-      effect(() => {
+      effect(() => { // effects bindings can be hidden via src/controls/utils
         c.frameRate(Number(data.value));
       });
     },
