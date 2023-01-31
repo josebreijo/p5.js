@@ -4,14 +4,14 @@ import { IconAdjustmentsHorizontal, IconQuestionCircle } from '@tabler/icons';
 import p5 from 'p5';
 
 import type { Control, ControlSettings, ExperimentControls, ExperimentDefinition } from 'app/types';
-import { SKETCH_NODE_ID } from 'app/constants';
+import { DEFAULT_EXPERIMENT_ID, SKETCH_NODE_ID, STORAGE_KEY } from 'app/constants';
+import storage from 'app/modules/storage';
 import dom from 'app/utils/dom';
 import utils from './Controls.utils';
 import styles from './Controls.module.css';
 
 type Experiments = Record<string, ExperimentDefinition>;
 
-const DEFAULT_EXPERIMENT_ID = 'game-of-life';
 
 let sketchInstance: p5 | null = null;
 const experimentsImportMap = import.meta.glob('../../experiments/*/index.ts');
@@ -32,6 +32,7 @@ export function Controls() {
       try {
         const experimentDefinitions: Experiments = {};
 
+
         for (const [filePath, moduleImportCall] of Object.entries(experimentsImportMap)) {
           const module = (await moduleImportCall()) as { default: ExperimentDefinition };
 
@@ -51,8 +52,13 @@ export function Controls() {
           throw new Error(`No experiment found under "src/experiments"!`);
         }
 
+        const savedExperimentId = storage.get(STORAGE_KEY.ACTIVE_EXPERIMENT_ID);
+        const initialExperimentId = savedExperimentId || DEFAULT_EXPERIMENT_ID;
+
         setExperiments(experimentDefinitions);
-        setActiveExperiment(experimentDefinitions[DEFAULT_EXPERIMENT_ID]);
+        setActiveExperiment(experimentDefinitions[initialExperimentId]);
+
+        storage.set(STORAGE_KEY.ACTIVE_EXPERIMENT_ID, initialExperimentId)
       } catch (error) {
         console.error('Error loading experiments: ', error);
       }
@@ -84,7 +90,7 @@ export function Controls() {
         const controlsSetupQueue: ((c: p5) => void)[] = [];
         const controlsDrawQueue: ((c: p5) => void)[] = [];
         // A simple API to host all signals and methods to flush setup and draw phase effects
-        const controls: ExperimentControls = { setup() {}, draw() {}, signals: {} };
+        const controls: ExperimentControls = { setup() { }, draw() { }, signals: {} };
 
         for (const settings of controlsSettings) {
           // Initialize each signal with the control `defaultValue`.
@@ -135,7 +141,9 @@ export function Controls() {
 
   function changeExperiment(event: Event) {
     const target = event.target as HTMLSelectElement;
-    setActiveExperiment(experiments![target.value]);
+    const experimentId = target.value
+    setActiveExperiment(experiments![experimentId]);
+    storage.set(STORAGE_KEY.ACTIVE_EXPERIMENT_ID, experimentId)
   }
 
   if (!experiments || !activeExperiment) {

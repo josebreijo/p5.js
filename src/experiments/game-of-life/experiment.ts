@@ -193,7 +193,6 @@ export const experiment: Experiment = (c: p5) => {
   const statsControls = experiment.registerControls([aliveCountControl]);
 
   c.setup = function setup() {
-    console.log(c);
     controls.setup(c);
     tileControls.setup(c);
     playbackControls.setup(c);
