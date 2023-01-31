@@ -1,17 +1,19 @@
-import { Control, ControlCategory, ExperimentDefinition } from 'app/types';
+import {Control, ControlCategory, ExperimentDefinition} from 'app/types';
 
 type GroupedControls = Record<ControlCategory, Control[]>;
 type ControlGroup = [ControlCategory, Control[]];
 
+// TODO: review this abstraction
 const categoryPriority: Record<ControlCategory, number> = {
   rendering: 0,
   stats: 1,
   custom: 2,
+  storage: 3,
 };
 
 function groupControlsByCategory(controls: Control[]): ControlGroup[] {
   const grouped = controls.reduce((groupedControls, control) => {
-    const { category = 'custom' } = control.settings;
+    const {category = 'custom'} = control.settings;
     if (category in groupedControls) {
       groupedControls[category].push(control);
     } else {
@@ -47,4 +49,4 @@ function moduleIsExperiment(module: unknown): module is ExperimentDefinition {
   );
 }
 
-export default { groupControlsByCategory, moduleIsExperiment };
+export default {groupControlsByCategory, moduleIsExperiment};
