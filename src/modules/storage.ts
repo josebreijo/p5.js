@@ -24,4 +24,4 @@ function remove(key: string) {
   window.localStorage.removeItem(key);
 }
 
-export default {get, set, remove};
+export default { get, set, remove };

@@ -13,9 +13,9 @@ interface Defaults {
 }
 
 const DEFAULTS: Defaults = {
-  TILE_SIZE: 20,
+  TILE_SIZE: 15,
   ALIVE_COLOR: '#2e9949',
-  DEAD_COLOR: '#000000',
+  DEAD_COLOR: '#000000'
 };
 
 // @ts-expect-error `exposeControl` defined in caller
@@ -47,7 +47,7 @@ export const experiment: Experiment = (c: p5) => {
     builtinControls.rendering.frameRate,
     builtinControls.rendering.frameCount,
     builtinControls.rendering.redraw,
-    builtinControls.storage.saveFrame(experiment.name),
+    builtinControls.storage.saveFrame(experiment.name)
   ]);
 
   function restart(userDefaults: Partial<Defaults> = DEFAULTS) {
@@ -130,7 +130,7 @@ export const experiment: Experiment = (c: p5) => {
     label: 'alive tile color',
     setup(data) {
       aliveTileColor = data.value;
-    },
+    }
   });
 
   const deadTileColorControl = factoryControls.color({
@@ -139,7 +139,7 @@ export const experiment: Experiment = (c: p5) => {
     label: 'dead tile color',
     setup(data) {
       deadTileColor = data.value;
-    },
+    }
   });
 
   const tileSizeControl = factoryControls.slider({
@@ -151,13 +151,13 @@ export const experiment: Experiment = (c: p5) => {
     step: 1,
     setup(data) {
       restart({ TILE_SIZE: data.value, DEAD_COLOR: deadTileColor, ALIVE_COLOR: aliveTileColor });
-    },
+    }
   });
 
   const tileControls = experiment.registerControls([
     aliveTileColorControl,
     deadTileColorControl,
-    tileSizeControl,
+    tileSizeControl
   ]);
 
   const restartControl = builtinControls.rendering.restart({
@@ -166,16 +166,16 @@ export const experiment: Experiment = (c: p5) => {
       tileControls.signals.deadTileColor.value = DEFAULTS.DEAD_COLOR;
       tileControls.signals.tileSize.value = DEFAULTS.TILE_SIZE;
       restart();
-    },
+    }
   });
   const reloadWithChangesControl = builtinControls.rendering.reload({
     reloadExperiment() {
       restart({
         ALIVE_COLOR: tileControls.signals.aliveTileColor.value,
         DEAD_COLOR: tileControls.signals.deadTileColor.value,
-        TILE_SIZE: tileControls.signals.tileSize.value,
+        TILE_SIZE: tileControls.signals.tileSize.value
       });
-    },
+    }
   });
 
   const playbackControls = experiment.registerControls([restartControl, reloadWithChangesControl]);
@@ -187,7 +187,7 @@ export const experiment: Experiment = (c: p5) => {
     category: 'stats',
     draw(data) {
       data.value = aliveCount;
-    },
+    }
   });
 
   const statsControls = experiment.registerControls([aliveCountControl]);
@@ -226,7 +226,7 @@ export const experiment: Experiment = (c: p5) => {
     restart({
       TILE_SIZE: tileSize.value,
       ALIVE_COLOR: aliveTileColor.value,
-      DEAD_COLOR: deadTileColor.value,
+      DEAD_COLOR: deadTileColor.value
     });
   };
 

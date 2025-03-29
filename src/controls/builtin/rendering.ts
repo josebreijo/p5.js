@@ -10,7 +10,7 @@ const running = factoryControls.checkbox({
   setup(data, c) {
     if (data.value && !c.isLooping()) c.loop();
     if (!data.value && c.isLooping()) c.noLoop();
-  },
+  }
 });
 
 const frameRate = factoryControls.slider({
@@ -24,7 +24,7 @@ const frameRate = factoryControls.slider({
   step: 1,
   setup(data, c) {
     c.frameRate(Number(data.value));
-  },
+  }
 });
 
 const frameCount = factoryControls.info({
@@ -35,7 +35,7 @@ const frameCount = factoryControls.info({
   category: 'rendering',
   draw(data, c) {
     data.value = c.frameCount.toString();
-  },
+  }
 });
 
 const fps = factoryControls.info({
@@ -46,52 +46,56 @@ const fps = factoryControls.info({
   category: 'rendering',
   draw(data, c) {
     data.value = c.frameRate().toFixed(0);
-  },
+  }
 });
 
 const redraw = factoryControls.button({
-  defaultValue: 'redraw',
   id: 'redraw',
+  defaultValue: 'draw',
   label: 'draw frame',
-  description: 'Click to redraw screen',
+  description: 'Click to draw frame',
   category: 'rendering',
   setup(data, c) {
     // TODO: review exposing a better/custom api
     // true signals the button was clicked, done via onChange(true) on click
-    if (data.value) {
+    if (data.value && !c.isLooping()) {
       c.redraw();
-      data.value = false;
+      data.value = 'draw';
     }
-  },
+  }
 });
 
 function restart({ restartExperiment }: { restartExperiment: () => void }) {
+  const defaultValue = 'reload';
+
   return factoryControls.button({
     id: 'restart',
-    defaultValue: 'restart',
+    defaultValue,
     label: 'restart experiment',
     category: 'rendering',
     setup(data) {
       if (data.value) {
         restartExperiment();
-        data.value = false;
+        data.value = defaultValue;
       }
-    },
+    }
   });
 }
 
 function reload({ reloadExperiment }: { reloadExperiment: () => void }) {
+  const defaultValue = 'reload';
+
   return factoryControls.button({
     id: 'reload',
-    defaultValue: 'reload',
+    defaultValue,
     label: 'reload with changes',
     category: 'custom',
     setup(data) {
       if (data.value) {
         reloadExperiment();
-        data.value = false;
+        data.value = defaultValue;
       }
-    },
+    }
   });
 }
 

@@ -1,10 +1,12 @@
 import factory from 'app/controls/factory';
 
 function saveFrame(name: string) {
+  const defaultValue = 'save frame'
+
   return factory.button({
     id: 'saveFrame',
-    defaultValue: 'save frame',
-    label: 'save frame',
+    defaultValue,
+    label: 'click to save frame',
     category: 'storage',
     setup(data, c) {
       // TDDO: review better abstraction
@@ -12,7 +14,7 @@ function saveFrame(name: string) {
         const date = new Date();
         const imageName = `${name}_${date.toLocaleDateString()}_${date.toLocaleTimeString()}`;
         c.saveCanvas(c.drawingContext.canvas, imageName, 'png');
-        data.value = false;
+        data.value = defaultValue;
       }
     },
   });

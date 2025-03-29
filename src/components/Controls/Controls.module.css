@@ -69,6 +69,8 @@
 .container:focus-within .controls {
   opacity: 1;
   max-height: 100%;
+  height: 100%;
+  overflow: scroll;
   pointer-events: all;
 }
 

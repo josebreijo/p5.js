@@ -6,10 +6,10 @@ import './index.module.css';
 
 function App() {
   return (
-    <main>
+    <>
       <section id={SKETCH_NODE_ID} />
       <Controls />
-    </main>
+    </>
   );
 }
 
