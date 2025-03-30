@@ -15,7 +15,7 @@ export const experiment: Experiment = (c: p5) => {
   let framesPerDrop = 60; // Start with 1 drop per second at 60fps
 
   // TODO: apply resize
-  const BOARD_WIDTH = 10;
+  const BOARD_WIDTH = 20;
   const BLOCK_SIZE = Math.floor(c.windowWidth / BOARD_WIDTH);
   const BOARD_HEIGHT = Math.floor(c.windowHeight / BLOCK_SIZE);
 
