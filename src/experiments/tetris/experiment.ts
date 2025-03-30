@@ -4,7 +4,7 @@ import type { Experiment } from 'app/types';
 import builtinControls from 'app/controls/builtin';
 import { SHAPES } from './shapes';
 import { EMPTY, FILLED, DELTA } from './constants';
-import { Delta, Direction } from './types';
+import { ActivePiece, Delta, Direction } from './types';
 
 // @ts-expect-error `exposeControl` defined in caller
 export const experiment: Experiment = (c: p5) => {
@@ -22,32 +22,27 @@ export const experiment: Experiment = (c: p5) => {
     return SHAPES[shapeName];
   }
 
-  function getNextActive() {
+  function getNextActivePiece(): ActivePiece {
     const shape = getRandomShape();
-
-    const shapeCenter = Math.floor(shape[0].length / 2);
+    const shapeCenter = Math.floor(shape.layout[0].length / 2);
     const screenCenter = Math.floor(BOARD_WIDTH / 2);
     const location = { x: screenCenter - shapeCenter, y: 0 };
-
-    return { shape, location };
+    return { ...shape, location };
   }
 
-  const board = Array.from({ length: BOARD_HEIGHT }, () =>
+  const BOARD = Array.from({ length: BOARD_HEIGHT }, () =>
     Array.from({ length: BOARD_WIDTH }, () => EMPTY)
   );
 
-  let active = getNextActive();
+  let activePiece: ActivePiece = getNextActivePiece();
 
   function drawBoard(c: p5) {
     c.push();
 
-    board.forEach((row, y) => {
+    BOARD.forEach((row, y) => {
       row.forEach((value, x) => {
-        const color = value ? c.color(25, 80, 80) : c.color(255);
-        c.fill(color);
-        const dx = x * BLOCK_SIZE;
-        const dy = y * BLOCK_SIZE;
-        c.rect(dx, dy, BLOCK_SIZE, BLOCK_SIZE);
+        c.fill(value ? c.color(25, 80, 80) : c.color(255));
+        c.rect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
       });
     });
 
@@ -56,13 +51,15 @@ export const experiment: Experiment = (c: p5) => {
 
   function drawActive(c: p5) {
     c.push();
-    c.fill(255, 100, 20);
+    c.fill(c.color(activePiece.color));
 
-    active.shape.forEach((row, y) => {
+    activePiece.layout.forEach((row, y) => {
       row.forEach((value, x) => {
         if (!value) return;
-        const dx = (x + active.location.x) * BLOCK_SIZE;
-        const dy = (y + active.location.y) * BLOCK_SIZE;
+
+        const dx = (x + activePiece.location.x) * BLOCK_SIZE;
+        const dy = (y + activePiece.location.y) * BLOCK_SIZE;
+
         c.rect(dx, dy, BLOCK_SIZE, BLOCK_SIZE);
       });
     });
@@ -73,16 +70,13 @@ export const experiment: Experiment = (c: p5) => {
   function hasCollition(delta: Delta) {
     let hasBoardCollition = false;
 
-    console.log('\n');
-
-    active.shape.forEach((row, y) => {
+    activePiece.layout.forEach((row, y) => {
       row.forEach((value, x) => {
         if (hasBoardCollition || !value) return;
 
-        const dx = x + active.location.x + delta.dx;
-        const dy = y + active.location.y + delta.dy;
-
-        const boardState = board[dy]?.[dx];
+        const dx = x + activePiece.location.x + delta.dx;
+        const dy = y + activePiece.location.y + delta.dy;
+        const boardState = BOARD[dy]?.[dx];
 
         if (boardState === undefined || boardState === FILLED) {
           hasBoardCollition = true;
@@ -95,14 +89,12 @@ export const experiment: Experiment = (c: p5) => {
   }
 
   function freezeActive() {
-    active.shape.forEach((row, y) => {
+    activePiece.layout.forEach((row, y) => {
       row.forEach((value, x) => {
         if (!value) return;
-
-        const dx = x + active.location.x;
-        const dy = y + active.location.y;
-
-        board[dy][dx] = 1;
+        const dx = x + activePiece.location.x;
+        const dy = y + activePiece.location.y;
+        BOARD[dy][dx] = FILLED;
       });
     });
   }
@@ -113,21 +105,53 @@ export const experiment: Experiment = (c: p5) => {
     if (hasCollition({ dx, dy })) {
       if (direction === 'DOWN') {
         freezeActive();
-        active = getNextActive();
+        activePiece = getNextActivePiece();
       }
     } else {
-      active.location.x += dx;
-      active.location.y += dy;
+      activePiece.location.x += dx;
+      activePiece.location.y += dy;
     }
   }
 
-  // function rotateActive() {
-  // }
+  function rotateActive() {
+    // Create a new array with swapped dimensions
+    const rotated = Array.from({ length: activePiece.layout[0].length }, () =>
+      Array.from({ length: activePiece.layout.length }, () => EMPTY)
+    );
+
+    // Rotate 90 degrees counter-clockwise by mapping:
+    // - row index becomes the column index
+    // - column index becomes the row index from right
+    for (let y = 0; y < activePiece.layout.length; y++) {
+      for (let x = 0; x < activePiece.layout[y].length; x++) {
+        const newX = y;
+        const newY = activePiece.layout[y].length - 1 - x;
+        rotated[newY][newX] = activePiece.layout[y][x];
+      }
+    }
+
+    // Check if rotation would cause collision
+    const originalShape = activePiece.layout;
+    activePiece.layout = rotated;
+
+    if (hasCollition({ dx: 0, dy: 0 })) {
+      // Restore original shape if collision detected
+      activePiece.layout = originalShape;
+      return;
+    }
+  }
+
+  function checkForFullRows() {
+    BOARD.forEach((row, y) => {
+      if (row.every((value) => value === FILLED)) {
+        BOARD.splice(y, 1);
+        BOARD.unshift(Array.from({ length: BOARD_WIDTH }, () => EMPTY));
+      }
+    });
+  }
 
   document.addEventListener('keydown', (event) => {
-    event.preventDefault();
-
-    switch (event.key) {
+    switch (event.code) {
       case 'ArrowRight': {
         moveActive('RIGHT');
         break;
@@ -141,13 +165,16 @@ export const experiment: Experiment = (c: p5) => {
         break;
       }
       case 'ArrowUp': {
-        // rotateActive();
+        rotateActive();
         break;
       }
-      case ' ': {
+      case 'Space': {
         controls.signals.running.value = !controls.signals.running.value;
+        break;
       }
     }
+
+    event.preventDefault();
   });
 
   const controls = experiment.registerControls([
@@ -163,14 +190,11 @@ export const experiment: Experiment = (c: p5) => {
     controls.signals.frameRate.value = 60;
 
     c.createCanvas(c.windowWidth, c.windowHeight);
+    rotateActive();
     // c.noLoop();
   };
 
   let lastFrame = 0;
-  window.tetris = {
-    board,
-    active
-  };
 
   c.draw = function draw() {
     lastFrame += 1;
@@ -178,12 +202,14 @@ export const experiment: Experiment = (c: p5) => {
 
     controls.draw(c);
 
-    if (lastFrame >= controls.signals.frameRate.value / 2) {
+    if (lastFrame >= controls.signals.frameRate.value) {
       lastFrame = 0;
       moveActive('DOWN');
     }
 
     drawBoard(c);
     drawActive(c);
+
+    checkForFullRows();
   };
 };

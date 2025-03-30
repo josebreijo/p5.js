@@ -8,3 +8,13 @@ export const DELTA: Record<Direction, Delta> = {
   RIGHT: { dx: 1, dy: 0 },
   DOWN: { dx: 0, dy: 1 }
 };
+
+export const COLORS = {
+  yellow: [204, 204, 153],
+  cyan: [153, 204, 204],
+  green: [153, 204, 153],
+  red: [204, 153, 153],
+  orange: [204, 178, 153],
+  blue: [153, 153, 204],
+  purple: [178, 153, 204]
+};
