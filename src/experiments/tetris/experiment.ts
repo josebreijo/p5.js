@@ -8,7 +8,11 @@ import { ActivePiece, Delta, Direction } from './types';
 
 // @ts-expect-error `exposeControl` defined in caller
 export const experiment: Experiment = (c: p5) => {
-  console.clear();
+  let gameScore = 0;
+  let level = 1;
+  let linesCleared = 0;
+  let backToBack = false;
+  let framesPerDrop = 60; // Start with 1 drop per second at 60fps
 
   // TODO: apply resize
   const BOARD_WIDTH = 10;
@@ -45,12 +49,17 @@ export const experiment: Experiment = (c: p5) => {
     });
     activePiece = getNextActivePiece();
     isGameOver = false;
+    gameScore = 0;
+    level = 1;
+    linesCleared = 0;
+    backToBack = false;
+    framesPerDrop = 60; // Reset speed
   }
 
   function checkGameOver() {
     if (BOARD[0].some((cell) => cell === FILLED)) {
       isGameOver = true;
-      alert('Game Over! Press OK to restart.');
+      alert(`Game Over!\nFinal Score: ${gameScore}\nLevel Reached: ${level}\nPress OK to restart.`);
       resetGame();
     }
   }
@@ -95,16 +104,21 @@ export const experiment: Experiment = (c: p5) => {
 
         const dx = x + activePiece.location.x + delta.dx;
         const dy = y + activePiece.location.y + delta.dy;
-        const boardState = BOARD[dy]?.[dx];
 
-        if (boardState === undefined || boardState === FILLED) {
+        // Check if we're out of bounds or hitting a filled cell
+        if (
+          dx < 0 ||
+          dx >= BOARD_WIDTH ||
+          dy >= BOARD_HEIGHT ||
+          (dy >= 0 && BOARD[dy][dx] === FILLED)
+        ) {
           hasBoardCollition = true;
           return;
         }
       });
     });
 
-    return hasBoardCollition || false;
+    return hasBoardCollition;
   }
 
   function freezeActive() {
@@ -113,7 +127,10 @@ export const experiment: Experiment = (c: p5) => {
         if (!value) return;
         const dx = x + activePiece.location.x;
         const dy = y + activePiece.location.y;
-        BOARD[dy][dx] = FILLED;
+        if (dy >= 0) {
+          // Only place pieces that are within the board
+          BOARD[dy][dx] = FILLED;
+        }
       });
     });
 
@@ -163,12 +180,56 @@ export const experiment: Experiment = (c: p5) => {
   }
 
   function checkForFullRows() {
+    let rowsCleared = 0;
     BOARD.forEach((row, y) => {
       if (row.every((value) => value === FILLED)) {
         BOARD.splice(y, 1);
         BOARD.unshift(Array.from({ length: BOARD_WIDTH }, () => EMPTY));
+        rowsCleared += 1;
       }
     });
+
+    if (rowsCleared > 0) {
+      // Calculate base score based on number of lines cleared
+      let baseScore = 0;
+      switch (rowsCleared) {
+        case 1:
+          baseScore = 100 * level;
+          break;
+        case 2:
+          baseScore = 300 * level;
+          break;
+        case 3:
+          baseScore = 500 * level;
+          break;
+        case 4:
+          baseScore = 800 * level;
+          backToBack = true;
+          break;
+      }
+
+      // Apply back-to-back bonus if applicable
+      if (backToBack) {
+        baseScore = Math.floor(baseScore * 1.5);
+      }
+
+      // Update total score and lines cleared
+      gameScore += baseScore;
+      linesCleared += rowsCleared;
+
+      // Update level every 10 lines cleared
+      const newLevel = Math.floor(linesCleared / 10) + 1;
+      if (newLevel !== level) {
+        level = newLevel;
+        // Increase speed with each level (decrease frames per drop)
+        framesPerDrop = Math.max(10, 60 - (level - 1) * 5); // Cap at 6 drops per second
+      }
+
+      // Reset back-to-back if not a Tetris
+      if (rowsCleared !== 4) {
+        backToBack = false;
+      }
+    }
   }
 
   document.addEventListener('keydown', (event) => {
@@ -225,7 +286,7 @@ export const experiment: Experiment = (c: p5) => {
 
     controls.draw(c);
 
-    if (!isGameOver && lastFrame >= controls.signals.frameRate.value) {
+    if (!isGameOver && lastFrame >= framesPerDrop) {
       lastFrame = 0;
       moveActive('DOWN');
     }
