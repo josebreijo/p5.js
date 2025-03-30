@@ -35,6 +35,25 @@ export const experiment: Experiment = (c: p5) => {
   );
 
   let activePiece: ActivePiece = getNextActivePiece();
+  let isGameOver = false;
+
+  function resetGame() {
+    BOARD.forEach((row, y) => {
+      row.forEach((_, x) => {
+        BOARD[y][x] = EMPTY;
+      });
+    });
+    activePiece = getNextActivePiece();
+    isGameOver = false;
+  }
+
+  function checkGameOver() {
+    if (BOARD[0].some((cell) => cell === FILLED)) {
+      isGameOver = true;
+      alert('Game Over! Press OK to restart.');
+      resetGame();
+    }
+  }
 
   function drawBoard(c: p5) {
     c.push();
@@ -97,6 +116,8 @@ export const experiment: Experiment = (c: p5) => {
         BOARD[dy][dx] = FILLED;
       });
     });
+
+    checkGameOver();
   }
 
   function moveActive(direction: Direction) {
@@ -151,6 +172,8 @@ export const experiment: Experiment = (c: p5) => {
   }
 
   document.addEventListener('keydown', (event) => {
+    if (isGameOver) return;
+
     switch (event.code) {
       case 'ArrowRight': {
         moveActive('RIGHT');
@@ -202,14 +225,13 @@ export const experiment: Experiment = (c: p5) => {
 
     controls.draw(c);
 
-    if (lastFrame >= controls.signals.frameRate.value) {
+    if (!isGameOver && lastFrame >= controls.signals.frameRate.value) {
       lastFrame = 0;
       moveActive('DOWN');
     }
 
     drawBoard(c);
     drawActive(c);
-
     checkForFullRows();
   };
 };
