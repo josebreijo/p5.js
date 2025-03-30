@@ -5,7 +5,7 @@ const experimentDefinition: ExperimentDefinition = {
   id: 'tetris',
   name: 'Tetris',
   description: 'Simple tetris game',
-  url: 'https://example.com',
+  url: 'https://en.wikipedia.org/wiki/Tetris',
   experiment
 };
 

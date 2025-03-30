@@ -11,7 +11,7 @@ export const experiment: Experiment = (c: p5) => {
   console.clear();
 
   // TODO: apply resize
-  const BOARD_WIDTH = 20;
+  const BOARD_WIDTH = 10;
   const BLOCK_SIZE = Math.floor(c.windowWidth / BOARD_WIDTH);
   const BOARD_HEIGHT = Math.floor(c.windowHeight / BLOCK_SIZE);
 
@@ -32,8 +32,8 @@ export const experiment: Experiment = (c: p5) => {
     return { shape, location };
   }
 
-  const board = Array.from({ length: BOARD_WIDTH }, () =>
-    Array.from({ length: BOARD_HEIGHT }, () => EMPTY)
+  const board = Array.from({ length: BOARD_HEIGHT }, () =>
+    Array.from({ length: BOARD_WIDTH }, () => EMPTY)
   );
 
   let active = getNextActive();
@@ -41,8 +41,8 @@ export const experiment: Experiment = (c: p5) => {
   function drawBoard(c: p5) {
     c.push();
 
-    board.forEach((row, x) => {
-      row.forEach((value, y) => {
+    board.forEach((row, y) => {
+      row.forEach((value, x) => {
         const color = value ? c.color(25, 80, 80) : c.color(255);
         c.fill(color);
         const dx = x * BLOCK_SIZE;
@@ -82,7 +82,7 @@ export const experiment: Experiment = (c: p5) => {
         const dx = x + active.location.x + delta.dx;
         const dy = y + active.location.y + delta.dy;
 
-        const boardState = board[dx][dy];
+        const boardState = board[dy]?.[dx];
 
         if (boardState === undefined || boardState === FILLED) {
           hasBoardCollition = true;
@@ -102,7 +102,7 @@ export const experiment: Experiment = (c: p5) => {
         const dx = x + active.location.x;
         const dy = y + active.location.y;
 
-        board[dx][dy] = 1;
+        board[dy][dx] = 1;
       });
     });
   }
@@ -144,6 +144,9 @@ export const experiment: Experiment = (c: p5) => {
         // rotateActive();
         break;
       }
+      case ' ': {
+        controls.signals.running.value = !controls.signals.running.value;
+      }
     }
   });
 
@@ -160,10 +163,14 @@ export const experiment: Experiment = (c: p5) => {
     controls.signals.frameRate.value = 60;
 
     c.createCanvas(c.windowWidth, c.windowHeight);
-    c.noLoop();
+    // c.noLoop();
   };
 
   let lastFrame = 0;
+  window.tetris = {
+    board,
+    active
+  };
 
   c.draw = function draw() {
     lastFrame += 1;
